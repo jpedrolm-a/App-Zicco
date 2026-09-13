@@ -1,0 +1,826 @@
+<title>Diagnóstico Zicco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --ground:      #F1F4F5;
+    --surface:     #FFFFFF;
+    --surface-sunk:#E9EEEF;
+    --ink:         #121A1C;
+    --ink-soft:    #56656A;
+    --ink-faint:   #84969B;
+    --line:        #DBE3E5;
+    --line-strong: #C3CFD2;
+    --accent:      #0F4C5C;
+    --accent-ink:  #FFFFFF;
+    --accent-wash: #E4EFF2;
+    --ember:       #C9632A;
+    --ember-wash:  #FAEDE4;
+    --ok:          #16704A;
+    --ok-wash:     #E1F0E8;
+    --warn:        #96650A;
+    --warn-wash:   #F8EFDC;
+    --crit:        #A82A22;
+    --crit-wash:   #F8E6E4;
+
+    --radius:  10px;
+    --shadow:  0 1px 2px rgba(18, 26, 28, .06), 0 8px 24px -12px rgba(18, 26, 28, .18);
+
+    color-scheme: light dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #0B1214;
+      --surface:     #121D20;
+      --surface-sunk:#0F1A1D;
+      --ink:         #E7EDEE;
+      --ink-soft:    #93A3A7;
+      --ink-faint:   #6C7E83;
+      --line:        #212F33;
+      --line-strong: #314348;
+      --accent:      #59A9BE;
+      --accent-ink:  #08171B;
+      --accent-wash: #13292F;
+      --ember:       #E08A50;
+      --ember-wash:  #2A1D14;
+      --ok:          #5EC08D;
+      --ok-wash:     #12271E;
+      --warn:        #D9A441;
+      --warn-wash:   #2A2114;
+      --crit:        #E8786C;
+      --crit-wash:   #2B1715;
+      --shadow:      0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #0B1214;
+    --surface:     #121D20;
+    --surface-sunk:#0F1A1D;
+    --ink:         #E7EDEE;
+    --ink-soft:    #93A3A7;
+    --ink-faint:   #6C7E83;
+    --line:        #212F33;
+    --line-strong: #314348;
+    --accent:      #59A9BE;
+    --accent-ink:  #08171B;
+    --accent-wash: #13292F;
+    --ember:       #E08A50;
+    --ember-wash:  #2A1D14;
+    --ok:          #5EC08D;
+    --ok-wash:     #12271E;
+    --warn:        #D9A441;
+    --warn-wash:   #2A2114;
+    --crit:        #E8786C;
+    --crit-wash:   #2B1715;
+    --shadow:      0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 40px 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  /* ---------- cabeçalho ---------- */
+
+  .masthead { display: flex; flex-direction: column; gap: 14px; }
+
+  .brand { display: flex; align-items: center; gap: 11px; }
+
+  .brand-mark {
+    width: 34px; height: 34px;
+    flex: none;
+    border-radius: 8px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    display: grid;
+    place-items: center;
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -.02em;
+  }
+
+  .brand-name {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: -.015em;
+  }
+
+  .brand-role {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--ink-faint);
+    margin-top: -3px;
+  }
+
+  h1 {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 6vw, 38px);
+    line-height: 1.12;
+    letter-spacing: -.025em;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .lede {
+    margin: 0;
+    color: var(--ink-soft);
+    max-width: 60ch;
+  }
+
+  /* ---------- verdict ---------- */
+
+  .verdict {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--line-strong);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .verdict[data-tone="ok"]   { border-left-color: var(--ok);   background: var(--ok-wash); }
+  .verdict[data-tone="warn"] { border-left-color: var(--warn); background: var(--warn-wash); }
+  .verdict[data-tone="crit"] { border-left-color: var(--crit); background: var(--crit-wash); }
+
+  .verdict-title {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -.01em;
+  }
+  .verdict-body { font-size: 14px; color: var(--ink-soft); }
+  .verdict[data-tone="ok"]   .verdict-body,
+  .verdict[data-tone="warn"] .verdict-body,
+  .verdict[data-tone="crit"] .verdict-body { color: var(--ink); opacity: .82; }
+
+  /* ---------- checks ---------- */
+
+  .checks { display: flex; flex-direction: column; gap: 16px; }
+
+  .check {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .check-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    padding: 16px 18px;
+  }
+
+  .check-step {
+    flex: none;
+    width: 25px; height: 25px;
+    margin-top: 1px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    font-weight: 500;
+    background: var(--surface-sunk);
+    color: var(--ink-faint);
+    border: 1px solid var(--line);
+  }
+  .check[data-state="ok"]   .check-step { background: var(--ok);   color: #fff; border-color: transparent; }
+  .check[data-state="crit"] .check-step { background: var(--crit); color: #fff; border-color: transparent; }
+  .check[data-state="warn"] .check-step { background: var(--warn); color: #fff; border-color: transparent; }
+  .check[data-state="busy"] .check-step { border-color: var(--accent); color: var(--accent); }
+
+  .check-titles { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+
+  .check-title {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -.01em;
+  }
+
+  .check-why { font-size: 13.5px; color: var(--ink-soft); }
+
+  .pill {
+    flex: none;
+    align-self: flex-start;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    padding: 3px 8px;
+    border-radius: 99px;
+    background: var(--surface-sunk);
+    color: var(--ink-faint);
+    border: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  .check[data-state="ok"]   .pill { background: var(--ok-wash);   color: var(--ok);   border-color: transparent; }
+  .check[data-state="crit"] .pill { background: var(--crit-wash); color: var(--crit); border-color: transparent; }
+  .check[data-state="warn"] .pill { background: var(--warn-wash); color: var(--warn); border-color: transparent; }
+  .check[data-state="busy"] .pill { background: var(--accent-wash); color: var(--accent); border-color: transparent; }
+
+  .check-body {
+    padding: 0 18px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .detail {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    background: var(--surface-sunk);
+    border-radius: 7px;
+    padding: 10px 12px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  /* ---------- controles ---------- */
+
+  .row { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; }
+
+  label.field { display: flex; flex-direction: column; gap: 5px; flex: 1 1 190px; min-width: 0; }
+
+  .field-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--ink-faint);
+  }
+
+  input[type="text"] {
+    font: inherit;
+    font-size: 14.5px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 7px;
+    padding: 8px 11px;
+    width: 100%;
+    min-width: 0;
+  }
+  input[type="text"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+
+  button {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: "IBM Plex Sans", sans-serif;
+    border-radius: 7px;
+    padding: 8px 15px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    background: var(--accent);
+    color: var(--accent-ink);
+    transition: opacity .14s ease;
+  }
+  button:hover:not(:disabled) { opacity: .87; }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+
+  button.ghost {
+    background: transparent;
+    color: var(--ink-soft);
+    border-color: var(--line-strong);
+  }
+
+  /* ---------- mural ---------- */
+
+  .roster { display: flex; flex-direction: column; gap: 1px; background: var(--line); border-radius: 7px; overflow: hidden; border: 1px solid var(--line); }
+
+  .roster-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 9px 12px;
+    background: var(--surface);
+    font-size: 14px;
+  }
+  .roster-row .who { font-weight: 600; flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+  .roster-row .when {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+    flex: none;
+  }
+  .roster-row .badge {
+    flex: none;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--ember);
+    background: var(--ember-wash);
+    padding: 2px 6px;
+    border-radius: 99px;
+  }
+
+  .empty {
+    padding: 14px 12px;
+    background: var(--surface);
+    color: var(--ink-faint);
+    font-size: 13.5px;
+    text-align: center;
+  }
+
+  /* ---------- rodapé ---------- */
+
+  .report { display: flex; flex-direction: column; gap: 11px; }
+
+  .report h2 {
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -.015em;
+    margin: 0;
+  }
+
+  .note {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+  .note strong { color: var(--ink); font-weight: 600; }
+
+  .spinner {
+    display: inline-block;
+    width: 11px; height: 11px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    vertical-align: -1px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spinner { animation-duration: 2.4s; }
+    * { transition-duration: .01ms !important; }
+  }
+
+  @media (max-width: 460px) {
+    .check-head { flex-wrap: wrap; }
+    .pill { order: 3; margin-left: 38px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="brand">
+      <div class="brand-mark">Z</div>
+      <div>
+        <div class="brand-name">Zicco</div>
+        <div class="brand-role">Controle financeiro</div>
+      </div>
+    </div>
+    <h1>Antes de construir, vamos testar o alicerce</h1>
+    <p class="lede">
+      Três verificações, nesta ordem, porque cada uma depende da anterior. Abra esta
+      página nos dois celulares ou computadores — o seu e o do seu sócio. Se as três
+      passarem para vocês dois, o aplicativo inteiro pode ser construído aqui, sem custo
+      de hospedagem.
+    </p>
+  </header>
+
+  <div class="verdict" id="verdict" data-tone="neutral">
+    <div class="verdict-title" id="verdict-title">Verificando…</div>
+    <div class="verdict-body" id="verdict-body">Aguarde alguns segundos enquanto a página conversa com o servidor.</div>
+  </div>
+
+  <div class="checks">
+
+    <!-- 1 -->
+    <section class="check" id="check-db" data-state="busy">
+      <div class="check-head">
+        <div class="check-step">1</div>
+        <div class="check-titles">
+          <div class="check-title">Memória compartilhada</div>
+          <div class="check-why">
+            O aplicativo precisa guardar seus lançamentos num lugar que os dois enxerguem.
+            Este teste grava um dado e lê de volta.
+          </div>
+        </div>
+        <div class="pill" id="pill-db">Testando</div>
+      </div>
+      <div class="check-body">
+        <div class="detail" id="detail-db">Conectando ao banco de dados…</div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="check" id="check-share" data-state="idle">
+      <div class="check-head">
+        <div class="check-step">2</div>
+        <div class="check-titles">
+          <div class="check-title">Vocês dois, os mesmos dados</div>
+          <div class="check-why">
+            Escreva seu nome e registre presença. O nome do seu sócio deve aparecer
+            aqui sozinho, sem recarregar a página. É assim que a conciliação de vocês
+            vai funcionar.
+          </div>
+        </div>
+        <div class="pill" id="pill-share">Aguardando</div>
+      </div>
+      <div class="check-body">
+        <div class="row">
+          <label class="field" for="nome">
+            <span class="field-label">Seu nome</span>
+            <input type="text" id="nome" placeholder="ex.: Pedro" autocomplete="off" maxlength="40">
+          </label>
+          <button id="btn-presenca" disabled>Registrar presença</button>
+        </div>
+        <div class="roster" id="roster">
+          <div class="empty">Ninguém registrou presença ainda.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="check" id="check-ia" data-state="idle">
+      <div class="check-head">
+        <div class="check-step">3</div>
+        <div class="check-titles">
+          <div class="check-title">Classificação automática</div>
+          <div class="check-why">
+            Esta é a peça que vai ler seus extratos e sugerir a categoria de cada
+            lançamento. O teste envia uma despesa de verdade do seu ramo e pede a
+            classificação.
+          </div>
+        </div>
+        <div class="pill" id="pill-ia">Aguardando</div>
+      </div>
+      <div class="check-body">
+        <div class="detail" id="lancamento-exemplo">PIX ENVIADO 12/03 ATACADAO DIA A DIA COM LTDA        -R$ 342,90</div>
+        <div class="row">
+          <button id="btn-ia">Classificar este lançamento</button>
+        </div>
+        <div class="detail" id="detail-ia" hidden></div>
+      </div>
+    </section>
+
+  </div>
+
+  <section class="report">
+    <h2>Resultado para me enviar</h2>
+    <div class="detail" id="relatorio">Aguardando as verificações…</div>
+    <div class="row">
+      <button class="ghost" id="btn-copiar">Copiar resultado</button>
+    </div>
+  </section>
+
+  <p class="note">
+    <strong>O que fazer agora:</strong> abra este mesmo link no aparelho do seu sócio,
+    peça para ele registrar a presença dele e rodar a verificação 3. Depois me diga o
+    que apareceu para cada um de vocês — inclusive se algo falhou. É essa resposta que
+    decide se seguimos por aqui ou se partimos para um aplicativo web próprio.
+  </p>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var estado = {
+    db:    { s: "busy", msg: "Conectando ao banco de dados…" },
+    share: { s: "idle", msg: "Aguardando a verificação 1." },
+    ia:    { s: "idle", msg: "Ainda não testado." }
+  };
+
+  var dbRef = null;
+  var podeEscrever = null;
+
+  var el = function (id) { return document.getElementById(id); };
+
+  var rotulos = {
+    idle: "Aguardando", busy: "Testando", ok: "Funcionou",
+    warn: "Atenção", crit: "Falhou"
+  };
+
+  function pintar(chave, seccao, pilula) {
+    var st = estado[chave];
+    el(seccao).setAttribute("data-state", st.s);
+    el(pilula).textContent = rotulos[st.s] || st.s;
+  }
+
+  function desenhar() {
+    pintar("db", "check-db", "pill-db");
+    pintar("share", "check-share", "pill-share");
+    pintar("ia", "check-ia", "pill-ia");
+    el("detail-db").textContent = estado.db.msg;
+    veredito();
+    relatorio();
+  }
+
+  function veredito() {
+    var v = el("verdict"), t = el("verdict-title"), b = el("verdict-body");
+    if (estado.db.s === "busy") {
+      v.setAttribute("data-tone", "neutral");
+      t.textContent = "Verificando…";
+      b.textContent = "Aguarde alguns segundos enquanto a página conversa com o servidor.";
+      return;
+    }
+    if (estado.db.s === "crit") {
+      v.setAttribute("data-tone", "crit");
+      t.textContent = "Este caminho não vai funcionar";
+      b.textContent = "O banco de dados compartilhado não respondeu nesta conta. Me avise: partimos para um aplicativo web próprio, que também sai de graça.";
+      return;
+    }
+    if (estado.db.s === "ok" && podeEscrever === false) {
+      v.setAttribute("data-tone", "warn");
+      t.textContent = "Você está em modo somente leitura";
+      b.textContent = "Dá para ver os dados, mas não para gravar. Quem abriu com esta permissão conseguiria acompanhar os relatórios, mas não lançar nada.";
+      return;
+    }
+    if (estado.db.s === "ok" && estado.ia.s === "ok") {
+      v.setAttribute("data-tone", "ok");
+      t.textContent = "Tudo certo — podemos construir aqui";
+      b.textContent = "Memória compartilhada e classificação automática respondendo. Falta só confirmar que seu sócio vê o mesmo que você.";
+      return;
+    }
+    if (estado.db.s === "ok") {
+      v.setAttribute("data-tone", "ok");
+      t.textContent = "Alicerce de pé";
+      b.textContent = "O banco de dados respondeu. Siga para as verificações 2 e 3 — e chame seu sócio.";
+      return;
+    }
+    v.setAttribute("data-tone", "warn");
+    t.textContent = "Resultado parcial";
+    b.textContent = "Veja os detalhes de cada verificação abaixo.";
+  }
+
+  function relatorio() {
+    var linhas = [
+      "DIAGNÓSTICO ZICCO — " + new Date().toLocaleString("pt-BR"),
+      "",
+      "1. Memória compartilhada ... " + (rotulos[estado.db.s] || estado.db.s),
+      "   " + estado.db.msg,
+      "2. Dados compartilhados .... " + (rotulos[estado.share.s] || estado.share.s),
+      "   " + estado.share.msg,
+      "3. Classificação por IA .... " + (rotulos[estado.ia.s] || estado.ia.s),
+      "   " + estado.ia.msg
+    ];
+    el("relatorio").textContent = linhas.join("\n");
+  }
+
+  /* ---------- verificação 1 + 2 : banco de dados ---------- */
+
+  function horaCurta(ts) {
+    try {
+      return new Date(ts).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+    } catch (e) { return "--:--"; }
+  }
+
+  var meuId = null;
+  try { meuId = localStorage.getItem("zicco_id"); } catch (e) {}
+  if (!meuId) {
+    meuId = "v" + Math.random().toString(36).slice(2, 10);
+    try { localStorage.setItem("zicco_id", meuId); } catch (e) {}
+  }
+
+  function desenharRoster(docs) {
+    var alvo = el("roster");
+    if (!docs.length) {
+      alvo.innerHTML = '<div class="empty">Ninguém registrou presença ainda.</div>';
+      return;
+    }
+    alvo.textContent = "";
+    docs.forEach(function (d) {
+      var dado = d.data() || {};
+      var linha = document.createElement("div");
+      linha.className = "roster-row";
+
+      var quem = document.createElement("span");
+      quem.className = "who";
+      quem.textContent = String(dado.nome || "sem nome").slice(0, 40);
+      linha.appendChild(quem);
+
+      if (d.id === meuId) {
+        var b = document.createElement("span");
+        b.className = "badge";
+        b.textContent = "você";
+        linha.appendChild(b);
+      }
+
+      var quando = document.createElement("span");
+      quando.className = "when";
+      quando.textContent = horaCurta(dado.ts);
+      linha.appendChild(quando);
+
+      alvo.appendChild(linha);
+    });
+  }
+
+  function iniciarDb() {
+    if (!window.claude || typeof window.claude.use !== "function") {
+      estado.db = { s: "crit", msg: "Esta página não está rodando dentro do claude.ai, então o banco de dados não existe aqui. Abra pelo link do artifact." };
+      desenhar();
+      return;
+    }
+
+    window.claude.use("db").then(function (db) {
+      if (!db) {
+        estado.db = { s: "crit", msg: "O banco de dados compartilhado não está disponível nesta conta ou não foi autorizado." };
+        desenhar();
+        return;
+      }
+      dbRef = db;
+
+      var doc = db.doc("diagnostico/ping");
+
+      doc.get().then(function (snap) {
+        var anterior = snap.exists ? (snap.data() || {}) : {};
+        var vezes = (typeof anterior.leituras === "number" ? anterior.leituras : 0) + 1;
+
+        return doc.set({ leituras: vezes, ultimoAcesso: Date.now() }).then(function () {
+          podeEscrever = true;
+          estado.db = {
+            s: "ok",
+            msg: "Gravação e leitura confirmadas.\nEsta página já foi aberta " + vezes + "x nesta conta."
+          };
+          estado.share = { s: "idle", msg: "Pronto para registrar presença." };
+          el("btn-presenca").disabled = false;
+          desenhar();
+        }).catch(function (err) {
+          podeEscrever = false;
+          estado.db = {
+            s: "warn",
+            msg: "Leitura funcionou, mas a gravação foi recusada (" + (err && err.code ? err.code : "erro") + ").\nEste acesso é somente leitura."
+          };
+          estado.share = { s: "warn", msg: "Sem permissão de escrita neste acesso." };
+          desenhar();
+        });
+      }).catch(function (err) {
+        estado.db = { s: "crit", msg: "O banco respondeu com erro: " + (err && err.code ? err.code : "desconhecido") + "\n" + (err && err.message ? err.message : "") };
+        desenhar();
+      });
+
+      db.collection("presencas").orderBy("ts", "desc").limit(20).onSnapshot(
+        function (snap) {
+          desenharRoster(snap.docs);
+          if (snap.size > 1) {
+            estado.share = { s: "ok", msg: snap.size + " pessoas registradas — o compartilhamento entre vocês está funcionando." };
+          } else if (snap.size === 1) {
+            estado.share = { s: "warn", msg: "Só uma pessoa registrada. Peça para seu sócio abrir o link e registrar também." };
+          }
+          desenhar();
+        },
+        function (err) {
+          estado.share = { s: "crit", msg: "A lista ao vivo parou: " + (err && err.code ? err.code : "erro") };
+          desenhar();
+        }
+      );
+    }).catch(function () {
+      estado.db = { s: "crit", msg: "Não foi possível carregar o banco de dados." };
+      desenhar();
+    });
+  }
+
+  el("btn-presenca").addEventListener("click", function () {
+    var nome = el("nome").value.trim();
+    if (!nome) { el("nome").focus(); return; }
+    if (!dbRef) return;
+    try { localStorage.setItem("zicco_nome", nome); } catch (e) {}
+
+    var btn = el("btn-presenca");
+    btn.disabled = true;
+    btn.textContent = "Registrando…";
+
+    dbRef.collection("presencas").doc(meuId).set({ nome: nome, ts: Date.now() })
+      .then(function () {
+        btn.textContent = "Presença registrada";
+        setTimeout(function () { btn.textContent = "Atualizar presença"; btn.disabled = false; }, 1600);
+      })
+      .catch(function (err) {
+        estado.share = { s: "crit", msg: "Não consegui gravar: " + (err && err.code ? err.code : "erro") };
+        btn.textContent = "Falhou";
+        btn.disabled = false;
+        desenhar();
+      });
+  });
+
+  try {
+    var salvo = localStorage.getItem("zicco_nome");
+    if (salvo) el("nome").value = salvo;
+  } catch (e) {}
+
+  /* ---------- verificação 3 : IA ---------- */
+
+  el("btn-ia").addEventListener("click", function () {
+    var btn = el("btn-ia");
+    var saida = el("detail-ia");
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Consultando…';
+    estado.ia = { s: "busy", msg: "Consultando…" };
+    saida.hidden = false;
+    saida.textContent = "Aguardando resposta…";
+    desenhar();
+
+    function falhar(msg) {
+      estado.ia = { s: "crit", msg: msg };
+      saida.textContent = msg;
+      btn.disabled = false;
+      btn.textContent = "Tentar de novo";
+      desenhar();
+    }
+
+    if (!window.claude || typeof window.claude.use !== "function") {
+      falhar("Esta página não está rodando dentro do claude.ai.");
+      return;
+    }
+
+    window.claude.use("sample").then(function (sample) {
+      if (!sample) {
+        falhar("A classificação por IA não está disponível nesta conta. O aplicativo ainda funciona sem ela, usando memória de padrões e regras.");
+        return;
+      }
+
+      var pergunta =
+        "Você classifica lançamentos bancários de uma empresa brasileira de eventos " +
+        "particulares de pizza (buffet de pizza em festas).\n\n" +
+        "Lançamento: \"PIX ENVIADO 12/03 ATACADAO DIA A DIA COM LTDA\", débito de R$ 342,90.\n\n" +
+        "Responda SOMENTE com JSON, sem texto em volta, neste formato:\n" +
+        '{"categoria": "...", "grupo_dre": "...", "confianca": 0.0, "motivo": "..."}\n' +
+        "Onde grupo_dre é um de: Custos Diretos, Despesas Fixas, Deduções, Receita.";
+
+      sample.json(pergunta, { modelTier: "quick" }).then(function (r) {
+        var linhas = [
+          "Categoria ...... " + (r.categoria || "?"),
+          "Grupo no DRE ... " + (r.grupo_dre || "?"),
+          "Confiança ...... " + (typeof r.confianca === "number" ? Math.round(r.confianca * 100) + "%" : "?"),
+          "Motivo ......... " + (r.motivo || "?")
+        ];
+        saida.textContent = linhas.join("\n");
+        estado.ia = { s: "ok", msg: "Respondeu: " + (r.categoria || "?") + " / " + (r.grupo_dre || "?") };
+        btn.disabled = false;
+        btn.textContent = "Classificar de novo";
+        desenhar();
+      }).catch(function (err) {
+        var c = err && err.code ? err.code : "erro";
+        if (c === "not_granted") {
+          falhar("Você recusou a permissão de IA. Recarregue a página para tentar de novo.");
+        } else if (c === "rate_limited") {
+          falhar("Limite de uso atingido no momento. Tente novamente daqui a pouco.");
+        } else {
+          falhar("A IA respondeu com erro: " + c + (err && err.message ? "\n" + err.message : ""));
+        }
+      });
+    }).catch(function () {
+      falhar("Não foi possível carregar a classificação por IA.");
+    });
+  });
+
+  /* ---------- copiar ---------- */
+
+  el("btn-copiar").addEventListener("click", function () {
+    var btn = el("btn-copiar");
+    var txt = el("relatorio").textContent;
+    function ok() { btn.textContent = "Copiado"; setTimeout(function () { btn.textContent = "Copiar resultado"; }, 1600); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(ok).catch(function () { btn.textContent = "Selecione o texto acima"; });
+    } else {
+      btn.textContent = "Selecione o texto acima";
+    }
+  });
+
+  desenhar();
+  iniciarDb();
+})();
+</script>
