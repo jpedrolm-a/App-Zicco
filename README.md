@@ -21,7 +21,9 @@ Definida pelos sócios, é ela que ordena o roadmap:
 | Deduplicação | `FITID` + conta no OFX; hash normalizado no CSV | Reimportar o mesmo arquivo nunca duplica |
 | Regime contábil | **Duas visões** sobre os mesmos dados: fluxo de caixa (data do banco) e DRE (data de competência) | Eventos têm sinal e saldo em meses diferentes do evento; só caixa produz um DRE sem sentido |
 | Centro de lucro | O **evento** | Cada evento é um mini-negócio com receita e custo próprios; é onde mora a decisão comercial |
-| Regime tributário | MEI — teto de faturamento **configurável**, não fixo no código | O limite legal muda; e alerta de teto é requisito, não enfeite |
+| Regime tributário | MEI — teto de faturamento **configurável**, não fixo no código | O limite legal muda; e o alerta de teto é requisito, não enfeite |
+| Estrutura societária | **Uma empresa, um CNPJ.** Sociedade informal entre dois sócios | Um MEI só. O extrato de retiradas por sócio é o único registro do acordo entre eles — por isso é requisito, não conveniência |
+| Contas bancárias | **Uma conta PJ**, separada da pessoal | Extrato quase 100% relevante; dispensa filtro de despesa pessoal na Fase 1 |
 | Recebimentos | Previsões flexíveis por evento (1..N), sem módulo rígido de parcelas | 99% é PIX, e o formato varia entre sinal+saldo, à vista e parcelado |
 | Identidade dos sócios | Seleção manual do usuário, salva no navegador | A capability `user` não está disponível nesta conta; para dois sócios que confiam um no outro, é adequado |
 | Hospedagem | Artifact no claude.ai, código versionado aqui | Custo zero e uso com dados reais em dias; a lógica é JavaScript puro e migra para app próprio sem retrabalho |
@@ -44,6 +46,22 @@ Definida pelos sócios, é ela que ordena o roadmap:
 
 Indicadores derivados: CMV %, ticket médio por evento, custo por convidado,
 margem por evento, ponto de equilíbrio em eventos/mês, consumo do teto MEI.
+
+## Painel "Quanto posso retirar"
+
+Responde à dor nº 4 e é a funcionalidade mais rara do conjunto:
+
+```
+   Saldo nas contas hoje
+(-) Contas a pagar até o fim do mês
+(-) Custos comprometidos dos eventos já agendados
+(-) Reserva de segurança (configurável)
+= DISPONÍVEL PARA RETIRADA
+```
+
+Ao lado, o **pró-labore sustentável**: média da margem dos últimos 3 a 6 meses
+menos a reserva de reinvestimento — o quanto dá para retirar todo mês sem quebrar.
+Acompanhado do extrato de retiradas por sócio, no mês e no ano.
 
 ## Arquivos
 
