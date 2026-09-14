@@ -1,0 +1,892 @@
+<title>Leitor de Extratos Zicco</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --ground:      #F1F4F5;
+    --surface:     #FFFFFF;
+    --surface-sunk:#E9EEEF;
+    --ink:         #121A1C;
+    --ink-soft:    #56656A;
+    --ink-faint:   #84969B;
+    --line:        #DBE3E5;
+    --line-strong: #C3CFD2;
+    --accent:      #0F4C5C;
+    --accent-ink:  #FFFFFF;
+    --accent-wash: #E4EFF2;
+    --ember:       #C9632A;
+    --ember-wash:  #FAEDE4;
+    --ok:          #16704A;
+    --ok-wash:     #E1F0E8;
+    --warn:        #96650A;
+    --warn-wash:   #F8EFDC;
+    --crit:        #A82A22;
+    --crit-wash:   #F8E6E4;
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(18,26,28,.06), 0 8px 24px -14px rgba(18,26,28,.2);
+    color-scheme: light dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:#0B1214; --surface:#121D20; --surface-sunk:#0F1A1D;
+      --ink:#E7EDEE; --ink-soft:#93A3A7; --ink-faint:#6C7E83;
+      --line:#212F33; --line-strong:#314348;
+      --accent:#59A9BE; --accent-ink:#08171B; --accent-wash:#13292F;
+      --ember:#E08A50; --ember-wash:#2A1D14;
+      --ok:#5EC08D; --ok-wash:#12271E;
+      --warn:#D9A441; --warn-wash:#2A2114;
+      --crit:#E8786C; --crit-wash:#2B1715;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:#0B1214; --surface:#121D20; --surface-sunk:#0F1A1D;
+    --ink:#E7EDEE; --ink-soft:#93A3A7; --ink-faint:#6C7E83;
+    --line:#212F33; --line-strong:#314348;
+    --accent:#59A9BE; --accent-ink:#08171B; --accent-wash:#13292F;
+    --ember:#E08A50; --ember-wash:#2A1D14;
+    --ok:#5EC08D; --ok-wash:#12271E;
+    --warn:#D9A441; --warn-wash:#2A2114;
+    --crit:#E8786C; --crit-wash:#2B1715;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 940px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 36px 72px;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  .brand { display: flex; align-items: center; gap: 11px; }
+  .brand-mark {
+    width: 32px; height: 32px; flex: none; border-radius: 8px;
+    background: var(--accent); color: var(--accent-ink);
+    display: grid; place-items: center;
+    font-family: "Bricolage Grotesque", sans-serif; font-weight: 700;
+    font-size: 16px; letter-spacing: -.02em;
+  }
+  .brand-name { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 18px; letter-spacing: -.015em; }
+  .brand-role {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    text-transform: uppercase; letter-spacing: .1em; color: var(--ink-faint); margin-top: -3px;
+  }
+
+  h1 {
+    font-family: "Bricolage Grotesque", sans-serif; font-weight: 700;
+    font-size: clamp(26px, 5vw, 34px); line-height: 1.14; letter-spacing: -.025em;
+    margin: 0; text-wrap: balance;
+  }
+  .lede { margin: 0; color: var(--ink-soft); max-width: 62ch; }
+
+  h2 {
+    font-family: "Bricolage Grotesque", sans-serif; font-weight: 700;
+    font-size: 17px; letter-spacing: -.015em; margin: 0;
+  }
+
+  .head-block { display: flex; flex-direction: column; gap: 13px; }
+
+  /* ---------- dropzone ---------- */
+
+  .drop {
+    border: 1.5px dashed var(--line-strong);
+    border-radius: var(--radius);
+    background: var(--surface);
+    padding: 22px;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 14px;
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .drop.over { border-color: var(--accent); background: var(--accent-wash); }
+  .drop-text { flex: 1 1 240px; min-width: 0; }
+  .drop-title { font-weight: 600; margin-bottom: 2px; }
+  .drop-hint { font-size: 13px; color: var(--ink-soft); }
+  input[type="file"] { display: none; }
+
+  button {
+    font: inherit; font-size: 14px; font-weight: 500;
+    font-family: "IBM Plex Sans", sans-serif;
+    border-radius: 7px; padding: 8px 15px; cursor: pointer;
+    border: 1px solid transparent; background: var(--accent); color: var(--accent-ink);
+    transition: opacity .14s ease; white-space: nowrap;
+  }
+  button:hover:not(:disabled) { opacity: .87; }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  button:disabled { opacity: .45; cursor: not-allowed; }
+  button.ghost { background: transparent; color: var(--ink-soft); border-color: var(--line-strong); }
+  button.mini { font-size: 12.5px; padding: 5px 10px; }
+
+  /* ---------- banner exemplo ---------- */
+
+  .sample-flag {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+    background: var(--ember-wash); border-radius: var(--radius);
+    padding: 11px 15px; font-size: 13.5px; color: var(--ink);
+  }
+  .sample-flag .tag {
+    font-family: "IBM Plex Mono", monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: .08em;
+    background: var(--ember); color: #fff; padding: 2px 7px; border-radius: 99px; flex: none;
+  }
+  .sample-flag span.msg { flex: 1 1 200px; min-width: 0; }
+
+  /* ---------- tiles ---------- */
+
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(158px, 1fr)); gap: 11px; }
+  .tile {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: var(--radius); padding: 13px 15px;
+    display: flex; flex-direction: column; gap: 3px;
+  }
+  .tile-label {
+    font-family: "IBM Plex Mono", monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: .09em; color: var(--ink-faint);
+  }
+  .tile-value {
+    font-family: "IBM Plex Mono", monospace; font-weight: 600;
+    font-size: 19px; font-variant-numeric: tabular-nums; letter-spacing: -.01em;
+  }
+  .tile-sub { font-size: 12px; color: var(--ink-faint); }
+  .tile[data-tone="in"]  .tile-value { color: var(--ok); }
+  .tile[data-tone="out"] .tile-value { color: var(--crit); }
+
+  /* ---------- conferência ---------- */
+
+  .audit { display: flex; flex-direction: column; gap: 8px; }
+  .audit-row {
+    display: flex; align-items: flex-start; gap: 11px;
+    background: var(--surface); border: 1px solid var(--line);
+    border-left: 3px solid var(--line-strong);
+    border-radius: var(--radius); padding: 12px 15px;
+  }
+  .audit-row[data-tone="ok"]   { border-left-color: var(--ok); }
+  .audit-row[data-tone="warn"] { border-left-color: var(--warn); }
+  .audit-row[data-tone="crit"] { border-left-color: var(--crit); }
+  .audit-icon {
+    flex: none; width: 19px; height: 19px; margin-top: 1px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 11px; font-weight: 700; color: #fff;
+    background: var(--ink-faint);
+  }
+  .audit-row[data-tone="ok"]   .audit-icon { background: var(--ok); }
+  .audit-row[data-tone="warn"] .audit-icon { background: var(--warn); }
+  .audit-row[data-tone="crit"] .audit-icon { background: var(--crit); }
+  .audit-text { flex: 1 1 auto; min-width: 0; }
+  .audit-title { font-weight: 600; font-size: 14.5px; }
+  .audit-body { font-size: 13px; color: var(--ink-soft); overflow-wrap: anywhere; }
+
+  /* ---------- tabela ---------- */
+
+  .section { display: flex; flex-direction: column; gap: 12px; }
+  .section-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px; justify-content: space-between; }
+  .count {
+    font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 620px; }
+  th, td { text-align: left; padding: 9px 13px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  th {
+    font-family: "IBM Plex Mono", monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: .08em; color: var(--ink-faint);
+    font-weight: 500; background: var(--surface-sunk); position: sticky; top: 0;
+  }
+  td.date, td.amount {
+    font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums;
+    white-space: nowrap; font-size: 13px;
+  }
+  td.amount { text-align: right; font-weight: 500; }
+  td.amount.neg { color: var(--crit); }
+  td.amount.pos { color: var(--ok); }
+  td.desc { min-width: 200px; }
+  .desc-raw { font-size: 13.5px; overflow-wrap: anywhere; }
+  .desc-norm {
+    font-family: "IBM Plex Mono", monospace; font-size: 11px;
+    color: var(--ink-faint); margin-top: 1px; overflow-wrap: anywhere;
+  }
+  td.dup { white-space: nowrap; }
+  .flag {
+    font-family: "IBM Plex Mono", monospace; font-size: 10px;
+    text-transform: uppercase; letter-spacing: .06em;
+    padding: 2px 7px; border-radius: 99px; white-space: nowrap;
+  }
+  .flag.novo  { background: var(--ok-wash);    color: var(--ok); }
+  .flag.velho { background: var(--surface-sunk); color: var(--ink-faint); }
+
+  /* ---------- contrapartes ---------- */
+
+  .party-list { display: flex; flex-direction: column; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  .party {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--surface); padding: 10px 14px;
+  }
+  .party-name { flex: 1 1 auto; min-width: 0; font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+  .party-times {
+    font-family: "IBM Plex Mono", monospace; font-size: 11.5px; color: var(--ink-faint);
+    flex: none; font-variant-numeric: tabular-nums;
+  }
+  .party-total {
+    font-family: "IBM Plex Mono", monospace; font-size: 13.5px; font-weight: 600;
+    font-variant-numeric: tabular-nums; flex: none; white-space: nowrap;
+  }
+  .party-total.neg { color: var(--crit); }
+  .party-total.pos { color: var(--ok); }
+
+  .note {
+    font-size: 13.5px; color: var(--ink-soft);
+    border-top: 1px solid var(--line); padding-top: 16px;
+  }
+  .note strong { color: var(--ink); font-weight: 600; }
+
+  .row-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+  .hidden { display: none !important; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition-duration: .01ms !important; } }
+</style>
+
+<div class="wrap">
+
+  <header class="head-block">
+    <div class="brand">
+      <div class="brand-mark">Z</div>
+      <div>
+        <div class="brand-name">Zicco</div>
+        <div class="brand-role">Controle financeiro</div>
+      </div>
+    </div>
+    <h1>Leitor de extratos</h1>
+    <p class="lede">
+      Solte aqui o arquivo OFX do banco. Nada sai do seu aparelho — a leitura acontece
+      no próprio navegador. O objetivo é provar três coisas: que o formato do seu banco
+      é lido corretamente, que lançamento repetido nunca entra duas vezes, e que nenhum
+      lançamento se perde no caminho.
+    </p>
+  </header>
+
+  <div class="drop" id="drop">
+    <div class="drop-text">
+      <div class="drop-title">Arraste o extrato para cá</div>
+      <div class="drop-hint">Aceita .ofx (recomendado) e .csv — um arquivo por vez</div>
+    </div>
+    <button id="btn-escolher">Escolher arquivo</button>
+    <button class="ghost" id="btn-exemplo">Ver exemplo</button>
+    <input type="file" id="arquivo" accept=".ofx,.OFX,.csv,.CSV,.txt">
+  </div>
+
+  <div class="sample-flag" id="sample-flag">
+    <span class="tag">Exemplo</span>
+    <span class="msg">Estes números são fictícios, criados para demonstração. Solte seu extrato de verdade para substituí-los.</span>
+  </div>
+
+  <div id="resultado">
+
+    <div class="section" style="margin-bottom:26px;">
+      <div class="section-head">
+        <h2>Resumo do período</h2>
+        <span class="count" id="periodo">—</span>
+      </div>
+      <div class="tiles" id="tiles"></div>
+    </div>
+
+    <div class="section" style="margin-bottom:26px;">
+      <h2>Conferência</h2>
+      <div class="audit" id="audit"></div>
+    </div>
+
+    <div class="section" style="margin-bottom:26px;">
+      <div class="section-head">
+        <h2>Lançamentos</h2>
+        <span class="count" id="contagem">—</span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Descrição no banco</th>
+              <th style="text-align:right;">Valor</th>
+              <th>Situação</th>
+            </tr>
+          </thead>
+          <tbody id="linhas"></tbody>
+        </table>
+      </div>
+      <div class="row-btns">
+        <button class="ghost mini" id="btn-mais" hidden>Mostrar todos</button>
+        <button class="ghost mini" id="btn-esquecer">Esquecer o que já foi importado</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head">
+        <h2>Com quem você mais movimenta</h2>
+        <span class="count">agrupado pela descrição limpa</span>
+      </div>
+      <div class="party-list" id="partes"></div>
+    </div>
+
+  </div>
+
+  <p class="note">
+    <strong>Por que a descrição aparece duas vezes:</strong> embaixo do texto original,
+    em cinza, está a versão limpa — sem datas, códigos e CNPJ. É por ela que o aplicativo
+    reconhece que "PIX ENVIADO 12/03 ATACADAO DIA A DIA COM LTDA" e
+    "PIX ENVIADO 28/03 ATACADAO DIA A DIA COM LTDA" são o mesmo fornecedor, e é assim
+    que ele aprende a classificar sozinho.
+  </p>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var el = function (id) { return document.getElementById(id); };
+
+  var EXEMPLO_OFX = [
+    "OFXHEADER:100", "DATA:OFXSGML", "VERSION:102", "SECURITY:NONE",
+    "ENCODING:USASCII", "CHARSET:1252", "COMPRESSION:NONE",
+    "OLDFILEUID:NONE", "NEWFILEUID:NONE", "",
+    "<OFX><BANKMSGSRSV1><STMTTRNRS><STMTRS><CURDEF>BRL",
+    "<BANKACCTFROM><BANKID>0260<ACCTID>1234567-8<ACCTTYPE>CHECKING</BANKACCTFROM>",
+    "<BANKTRANLIST><DTSTART>20260801000000<DTEND>20260831235959",
+    t("20260803", "CREDIT",  1500.00, "PIX RECEBIDO 03/08 MARIANA COSTA SILVA",        "E2601"),
+    t("20260805", "DEBIT",   -342.90, "PIX ENVIADO 05/08 ATACADAO DIA A DIA COM LTDA", "E2602"),
+    t("20260807", "DEBIT",   -186.40, "COMPRA CARTAO 07/08 POSTO IPIRANGA 45",         "E2603"),
+    t("20260809", "DEBIT",   -420.00, "PIX ENVIADO 09/08 CARLOS EDUARDO ALVES",        "E2604"),
+    t("20260810", "CREDIT",  2800.00, "PIX RECEBIDO 10/08 RENATA BORGES DE LIMA",      "E2605"),
+    t("20260812", "DEBIT",    -66.00, "TARIFA PACOTE SERVICOS AGOSTO",                 "E2606"),
+    t("20260814", "DEBIT",   -518.75, "PIX ENVIADO 14/08 ATACADAO DIA A DIA COM LTDA", "E2607"),
+    t("20260816", "DEBIT",   -240.00, "PIX ENVIADO 16/08 DISTRIBUIDORA SAO JORGE ME",  "E2608"),
+    t("20260818", "CREDIT",  1200.00, "PIX RECEBIDO 18/08 JOAO PEDRO MARTINS",         "E2609"),
+    t("20260820", "DEBIT",    -75.90, "DAS SIMPLES NACIONAL MEI 08/2026",              "E2610"),
+    t("20260822", "DEBIT",   -380.00, "PIX ENVIADO 22/08 CARLOS EDUARDO ALVES",        "E2611"),
+    t("20260824", "DEBIT",   -167.30, "COMPRA CARTAO 24/08 POSTO IPIRANGA 45",         "E2612"),
+    t("20260826", "CREDIT",  1400.00, "PIX RECEBIDO 26/08 RENATA BORGES DE LIMA",      "E2613"),
+    t("20260828", "DEBIT",  -1500.00, "PIX ENVIADO 28/08 RETIRADA SOCIO",              "E2614"),
+    t("20260830", "DEBIT",   -294.60, "PIX ENVIADO 30/08 ATACADAO DIA A DIA COM LTDA", "E2615"),
+    "</BANKTRANLIST>",
+    "<LEDGERBAL><BALAMT>4108.15<DTASOF>20260831235959</LEDGERBAL>",
+    "</STMTRS></STMTTRNRS></BANKMSGSRSV1></OFX>"
+  ].join("\n");
+
+  function t(data, tipo, valor, memo, fitid) {
+    return "<STMTTRN><TRNTYPE>" + tipo + "<DTPOSTED>" + data + "000000" +
+           "<TRNAMT>" + valor.toFixed(2) + "<FITID>" + fitid +
+           "<MEMO>" + memo + "</STMTTRN>";
+  }
+
+  /* ================= leitura de arquivo ================= */
+
+  function decodificar(buffer) {
+    var bytes = new Uint8Array(buffer);
+    var utf8 = new TextDecoder("utf-8").decode(bytes);
+    if (utf8.indexOf("\uFFFD") === -1) return utf8;
+    try { return new TextDecoder("windows-1252").decode(bytes); }
+    catch (e) { return utf8; }
+  }
+
+  /* ================= parser OFX ================= */
+
+  function campo(bloco, nome) {
+    var m = new RegExp("<" + nome + ">([^<\\r\\n]*)", "i").exec(bloco);
+    return m ? m[1].trim() : "";
+  }
+
+  function dataOfx(bruto) {
+    var d = String(bruto).replace(/[^0-9]/g, "").slice(0, 8);
+    if (d.length !== 8) return null;
+    return d.slice(0, 4) + "-" + d.slice(4, 6) + "-" + d.slice(6, 8);
+  }
+
+  function numero(bruto) {
+    if (!bruto) return NaN;
+    var s = String(bruto).trim().replace(/\s/g, "");
+    // OFX usa ponto decimal, mas alguns bancos exportam vírgula
+    if (s.indexOf(",") > -1 && s.indexOf(".") > -1) {
+      s = s.replace(/\./g, "").replace(",", ".");
+    } else if (s.indexOf(",") > -1) {
+      s = s.replace(",", ".");
+    }
+    return parseFloat(s);
+  }
+
+  // Bancos dividem a descrição entre NAME e MEMO de formas diferentes: uns põem a
+  // contraparte em MEMO, outros em NAME com MEMO valendo só "Enviado"/"Recebido".
+  // Junta os dois sem repetir, em vez de apostar num campo só.
+  function descricaoDe(corpo) {
+    var nome = campo(corpo, "NAME");
+    var memo = campo(corpo, "MEMO");
+    if (nome && memo) {
+      var N = nome.toUpperCase(), M = memo.toUpperCase();
+      if (N.indexOf(M) > -1) return nome;
+      if (M.indexOf(N) > -1) return memo;
+      return nome + " · " + memo;
+    }
+    return nome || memo || "(sem descrição)";
+  }
+
+  function lerOfx(texto) {
+    var blocos = texto.split(/<STMTTRN>/i).slice(1);
+    if (!blocos.length) return null;
+
+    var lancamentos = [];
+    blocos.forEach(function (b, i) {
+      var corpo = b.split(/<\/STMTTRN>/i)[0];
+      var valor = numero(campo(corpo, "TRNAMT"));
+      var data  = dataOfx(campo(corpo, "DTPOSTED"));
+      if (isNaN(valor) || !data) return;
+      var memo = descricaoDe(corpo);
+      var fitid = campo(corpo, "FITID");
+      lancamentos.push({
+        id: fitid || ("semid-" + data + "-" + valor.toFixed(2) + "-" + i),
+        temFitid: !!fitid,
+        data: data,
+        valor: valor,
+        descricao: memo,
+        tipo: campo(corpo, "TRNTYPE")
+      });
+    });
+
+    if (!lancamentos.length) return null;
+
+    return {
+      formato: "OFX",
+      lancamentos: lancamentos,
+      banco:   campo(texto, "BANKID"),
+      conta:   campo(texto, "ACCTID"),
+      moeda:   campo(texto, "CURDEF") || "BRL",
+      inicio:  dataOfx(campo(texto, "DTSTART")),
+      fim:     dataOfx(campo(texto, "DTEND")),
+      saldo:   numero(campo(texto, "BALAMT")),
+      saldoEm: dataOfx(campo(texto, "DTASOF"))
+    };
+  }
+
+  /* ================= parser CSV ================= */
+
+  function separarLinha(linha, sep) {
+    var out = [], atual = "", aspas = false;
+    for (var i = 0; i < linha.length; i++) {
+      var c = linha[i];
+      if (c === '"') {
+        if (aspas && linha[i + 1] === '"') { atual += '"'; i++; }
+        else aspas = !aspas;
+      } else if (c === sep && !aspas) { out.push(atual); atual = ""; }
+      else atual += c;
+    }
+    out.push(atual);
+    return out.map(function (s) { return s.trim(); });
+  }
+
+  function dataBr(bruto) {
+    var s = String(bruto).trim();
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s);
+    if (m) return m[1] + "-" + m[2] + "-" + m[3];
+    m = /^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{2,4})/.exec(s);
+    if (m) {
+      var ano = m[3].length === 2 ? "20" + m[3] : m[3];
+      return ano + "-" + ("0" + m[2]).slice(-2) + "-" + ("0" + m[1]).slice(-2);
+    }
+    return null;
+  }
+
+  function lerCsv(texto) {
+    var linhas = texto.split(/\r?\n/).filter(function (l) { return l.trim(); });
+    if (linhas.length < 2) return null;
+
+    var sep = (linhas[0].split(";").length > linhas[0].split(",").length) ? ";" : ",";
+    var cab = separarLinha(linhas[0], sep).map(function (c) {
+      return c.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    });
+
+    function achar(nomes) {
+      for (var i = 0; i < cab.length; i++) {
+        for (var j = 0; j < nomes.length; j++) {
+          if (cab[i].indexOf(nomes[j]) > -1) return i;
+        }
+      }
+      return -1;
+    }
+
+    var iData  = achar(["data", "date"]);
+    var iValor = achar(["valor", "amount", "montante"]);
+    var iDesc  = achar(["descricao", "description", "historico", "lancamento", "titulo", "memo"]);
+    var iId    = achar(["identificador", "id"]);
+
+    if (iData === -1 || iValor === -1) return null;
+
+    var lancamentos = [];
+    for (var k = 1; k < linhas.length; k++) {
+      var col = separarLinha(linhas[k], sep);
+      var data = dataBr(col[iData]);
+      var valor = numero(col[iValor]);
+      if (!data || isNaN(valor)) continue;
+      var desc = iDesc > -1 ? col[iDesc] : "(sem descrição)";
+      var id = iId > -1 && col[iId] ? col[iId] : null;
+      lancamentos.push({
+        id: id || ("csv-" + data + "-" + valor.toFixed(2) + "-" + hash(desc)),
+        temFitid: !!id,
+        data: data, valor: valor, descricao: desc || "(sem descrição)", tipo: ""
+      });
+    }
+
+    if (!lancamentos.length) return null;
+
+    var datas = lancamentos.map(function (l) { return l.data; }).sort();
+    return {
+      formato: "CSV",
+      lancamentos: lancamentos,
+      banco: "", conta: "", moeda: "BRL",
+      inicio: datas[0], fim: datas[datas.length - 1],
+      saldo: NaN, saldoEm: null
+    };
+  }
+
+  function hash(s) {
+    var h = 0;
+    for (var i = 0; i < s.length; i++) { h = ((h << 5) - h + s.charCodeAt(i)) | 0; }
+    return Math.abs(h).toString(36);
+  }
+
+  /* ================= normalização ================= */
+
+  var OPERACOES = /\b(PIX\s+(ENVIADO|RECEBIDO|QRS|QRE|DEB|CRED)|PIX|ENVIADO|RECEBIDO|TED|DOC|TEV|TRANSFERENCIA\s+(ENVIADA|RECEBIDA)|TRANSFERENCIA|PAGAMENTO\s+DE\s+CONTA|PAGAMENTO|PAGTO|COMPRA\s+CARTAO|COMPRA|DEBITO\s+AUTOMATICO|DEB\s+AUT|SAQUE|DEPOSITO|RECEBIMENTO|ENVIO|LIQUIDACAO)\b/g;
+  var SUFIXOS   = /\b(LTDA|EIRELI|EPP|MEI|COM|COMERCIO|COMERCIAL|IND|INDUSTRIA|DISTRIBUIDORA|DISTRIB|SERVICOS|SERV)\b/g;
+
+  function normalizar(texto) {
+    var t = String(texto).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    t = t.replace(OPERACOES, " ");
+    t = t.replace(/\b\d{1,2}[\/.-]\d{1,2}([\/.-]\d{2,4})?\b/g, " ");
+    t = t.replace(/\b\d{2,3}[.\d]{6,}[-\/]?\d{0,4}\b/g, " ");
+    t = t.replace(/\b\d{5,}\b/g, " ");
+    t = t.replace(SUFIXOS, " ");
+    t = t.replace(/\s+(ME|SA|S\/A)\s*$/g, " ");
+    t = t.replace(/[^A-Z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+    return t || "(indefinido)";
+  }
+
+  /* ================= memória de importação ================= */
+
+  // Limite anual de faturamento do MEI. Confirme com o contador: muda por lei.
+  var TETO_MEI = 81000;
+
+  var CHAVE = "zicco_fitids";
+
+  function jaImportados() {
+    try {
+      var raw = localStorage.getItem(CHAVE);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) { return {}; }
+  }
+
+  function registrar(ids) {
+    try {
+      var mapa = jaImportados();
+      ids.forEach(function (id) { mapa[id] = 1; });
+      localStorage.setItem(CHAVE, JSON.stringify(mapa));
+    } catch (e) {}
+  }
+
+  /* ================= formatação ================= */
+
+  function brl(v) {
+    if (typeof v !== "number" || isNaN(v)) return "—";
+    return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  }
+
+  function dataBrExibir(iso) {
+    if (!iso) return "—";
+    var p = iso.split("-");
+    return p[2] + "/" + p[1] + "/" + p[0];
+  }
+
+  /* ================= render ================= */
+
+  var ehExemplo = true;
+  var mostrandoTudo = false;
+  var ultimoExtrato = null;
+  var ultimoNome = "";
+
+  function render(extrato, nomeArquivo) {
+    ultimoExtrato = extrato; ultimoNome = nomeArquivo;
+    var memoria = jaImportados();
+    var vistos = {};
+    var novos = [], repetidosNoArquivo = [], jaConhecidos = [];
+
+    extrato.lancamentos.forEach(function (l) {
+      if (vistos[l.id]) { l.situacao = "repetido-arquivo"; repetidosNoArquivo.push(l); }
+      else if (memoria[l.id]) { l.situacao = "ja-importado"; jaConhecidos.push(l); }
+      else { l.situacao = "novo"; novos.push(l); }
+      vistos[l.id] = 1;
+      l.limpa = normalizar(l.descricao);
+    });
+
+    var entradas = 0, saidas = 0;
+    extrato.lancamentos.forEach(function (l) {
+      if (l.situacao === "repetido-arquivo") return;
+      if (l.valor >= 0) entradas += l.valor; else saidas += l.valor;
+    });
+    var resultado = entradas + saidas;
+
+    /* --- agrupamento por contraparte (usado na conferência e na lista) --- */
+    var grupos = {};
+    extrato.lancamentos.forEach(function (l) {
+      if (l.situacao === "repetido-arquivo") return;
+      if (!grupos[l.limpa]) grupos[l.limpa] = { nome: l.limpa, total: 0, vezes: 0, ent: 0, sai: 0 };
+      var g = grupos[l.limpa];
+      g.total += l.valor; g.vezes += 1;
+      if (l.valor >= 0) g.ent += l.valor; else g.sai += l.valor;
+    });
+
+    // Uma contraparte que aparece dos dois lados costuma ser conta própria do sócio,
+    // não cliente nem fornecedor. Conta isso como receita distorce o faturamento.
+    var bilaterais = Object.keys(grupos).map(function (k) { return grupos[k]; })
+      .filter(function (g) { return g.ent > 0 && g.sai < 0 && g.vezes >= 4; })
+      .sort(function (a, b) { return b.ent - a.ent; });
+
+    /* --- consumo do teto MEI, no ano mais recente do arquivo --- */
+    var anoTopo = extrato.lancamentos.reduce(function (a, l) {
+      var y = l.data.slice(0, 4); return y > a ? y : a;
+    }, "0000");
+    var entradasAno = 0, ultimaData = "";
+    extrato.lancamentos.forEach(function (l) {
+      if (l.situacao === "repetido-arquivo" || l.data.slice(0, 4) !== anoTopo) return;
+      if (l.valor > 0) entradasAno += l.valor;
+      if (l.data > ultimaData) ultimaData = l.data;
+    });
+    var entradasBilaterais = bilaterais.reduce(function (s, g) { return s + g.ent; }, 0);
+
+    /* --- tiles --- */
+    var tiles = [
+      { label: "Lançamentos", valor: String(extrato.lancamentos.length), sub: extrato.formato + (extrato.conta ? " · conta " + extrato.conta : ""), tone: "" },
+      { label: "Entradas",    valor: brl(entradas), sub: "recebimentos do período", tone: "in" },
+      { label: "Saídas",      valor: brl(Math.abs(saidas)), sub: "pagamentos do período", tone: "out" },
+      { label: "Resultado",   valor: brl(resultado), sub: resultado >= 0 ? "sobrou no período" : "faltou no período", tone: resultado >= 0 ? "in" : "out" }
+    ];
+    if (!isNaN(extrato.saldo)) {
+      tiles.push({ label: "Saldo no banco", valor: brl(extrato.saldo), sub: "em " + dataBrExibir(extrato.saldoEm), tone: "" });
+    }
+
+    el("tiles").innerHTML = tiles.map(function (t) {
+      return '<div class="tile" data-tone="' + t.tone + '">' +
+             '<div class="tile-label">' + t.label + '</div>' +
+             '<div class="tile-value">' + t.valor + '</div>' +
+             '<div class="tile-sub">' + t.sub + '</div></div>';
+    }).join("");
+
+    el("periodo").textContent = extrato.inicio
+      ? dataBrExibir(extrato.inicio) + " a " + dataBrExibir(extrato.fim)
+      : nomeArquivo || "";
+
+    /* --- conferência --- */
+    var checagens = [];
+
+    var semId = extrato.lancamentos.filter(function (l) { return !l.temFitid; }).length;
+    if (extrato.formato === "OFX" && semId === 0) {
+      checagens.push({ tone: "ok", icone: "✓", titulo: "Identificador único presente em todos os lançamentos",
+        corpo: "O banco carimbou um código próprio (FITID) em cada linha. Reimportar este arquivo nunca vai duplicar nada." });
+    } else if (semId > 0) {
+      checagens.push({ tone: "warn", icone: "!", titulo: semId + " lançamento(s) sem identificador do banco",
+        corpo: "Para estes, a deduplicação usa data + valor + descrição, que é mais frágil. Confira se algum parece repetido." });
+    }
+
+    if (repetidosNoArquivo.length) {
+      checagens.push({ tone: "warn", icone: "!", titulo: repetidosNoArquivo.length + " linha(s) repetida(s) dentro do próprio arquivo",
+        corpo: "Foram descartadas do cálculo. Isso costuma acontecer quando o extrato é exportado com períodos sobrepostos." });
+    }
+
+    if (jaConhecidos.length) {
+      checagens.push({ tone: "ok", icone: "✓", titulo: jaConhecidos.length + " lançamento(s) já tinham sido importados antes",
+        corpo: "Reconhecidos pelo identificador e marcados na lista. Não entram de novo na contabilidade." });
+    }
+
+    if (!isNaN(extrato.saldo)) {
+      var inicialImplicito = extrato.saldo - (entradas + saidas);
+      checagens.push({ tone: "ok", icone: "✓", titulo: "Saldo declarado pelo banco: " + brl(extrato.saldo),
+        corpo: "Descontando a movimentação do período, o saldo no início era " + brl(inicialImplicito) +
+               ". Confira esse valor no seu extrato — se não bater, faltou lançamento no arquivo." });
+    } else {
+      checagens.push({ tone: "warn", icone: "!", titulo: "Este arquivo não declara o saldo da conta",
+        corpo: "Sem o saldo não dá para provar que nenhum lançamento se perdeu. É a principal razão para preferir OFX a CSV." });
+    }
+
+    if (extrato.inicio && extrato.fim) {
+      checagens.push({ tone: "ok", icone: "✓", titulo: "Período coberto: " + dataBrExibir(extrato.inicio) + " a " + dataBrExibir(extrato.fim),
+        corpo: "O aplicativo vai guardar essa faixa para avisar caso exista um intervalo de dias sem extrato importado." });
+    }
+
+    if (bilaterais.length) {
+      var nomes = bilaterais.slice(0, 3).map(function (g) { return g.nome; }).join(", ");
+      checagens.push({ tone: "warn", icone: "!", titulo: bilaterais.length + " contraparte(s) aparecem recebendo e pagando",
+        corpo: nomes + (bilaterais.length > 3 ? " e outras" : "") +
+               ". Quando o mesmo nome entra e sai, costuma ser conta própria de sócio, não cliente. " +
+               "Somam " + brl(entradasBilaterais) + " em entradas — se isso for transferência sua, não é faturamento e precisa sair da conta do teto." });
+    }
+
+    if (entradasAno > 0) {
+      var diasCorridos = Math.max(1, Math.round((new Date(ultimaData) - new Date(anoTopo + "-01-01")) / 86400000) + 1);
+      var porDia = entradasAno / diasCorridos;
+      var projecao = porDia * 365;
+      var pct = Math.round(entradasAno / TETO_MEI * 100);
+      var tomTeto = pct >= 90 ? "crit" : (pct >= 70 ? "warn" : "ok");
+      var quando = "";
+      if (entradasAno < TETO_MEI && porDia > 0) {
+        var faltam = Math.ceil((TETO_MEI - entradasAno) / porDia);
+        var alvo = new Date(new Date(ultimaData).getTime() + faltam * 86400000);
+        quando = alvo.getFullYear() > Number(anoTopo)
+          ? " No ritmo atual, você fecha o ano sem estourar."
+          : " No ritmo atual, o teto é atingido por volta de " + alvo.toLocaleDateString("pt-BR", { month: "long", day: "numeric" }) + ".";
+      } else if (entradasAno >= TETO_MEI) {
+        quando = " O teto já foi ultrapassado neste ano.";
+      }
+      checagens.push({ tone: tomTeto, icone: pct >= 70 ? "!" : "✓",
+        titulo: "Teto do MEI: " + pct + "% consumido em " + anoTopo,
+        corpo: brl(entradasAno) + " de entradas contra um limite de " + brl(TETO_MEI) +
+               ". Projeção para o ano fechado: " + brl(projecao) + "." + quando +
+               " Atenção: entradas que forem transferência sua ou reembolso não contam como faturamento — desconte antes de concluir." });
+    }
+
+    el("audit").innerHTML = checagens.map(function (c) {
+      return '<div class="audit-row" data-tone="' + c.tone + '">' +
+             '<div class="audit-icon">' + c.icone + '</div>' +
+             '<div class="audit-text"><div class="audit-title">' + esc(c.titulo) + '</div>' +
+             '<div class="audit-body">' + esc(c.corpo) + '</div></div></div>';
+    }).join("");
+
+    /* --- tabela --- */
+    var rotulo = { "novo": ["novo", "Novo"], "ja-importado": ["velho", "Já importado"], "repetido-arquivo": ["velho", "Repetido"] };
+
+    var TETO_LINHAS = 150;
+    var mostrar = mostrandoTudo ? extrato.lancamentos : extrato.lancamentos.slice(0, TETO_LINHAS);
+    var ocultos = extrato.lancamentos.length - mostrar.length;
+
+    el("btn-mais").hidden = ocultos <= 0;
+    el("btn-mais").textContent = "Mostrar os outros " + ocultos + " lançamentos";
+
+    el("linhas").innerHTML = mostrar.map(function (l) {
+      var r = rotulo[l.situacao];
+      return "<tr>" +
+        '<td class="date">' + dataBrExibir(l.data) + "</td>" +
+        '<td class="desc"><div class="desc-raw">' + esc(l.descricao) + "</div>" +
+        '<div class="desc-norm">' + esc(l.limpa) + "</div></td>" +
+        '<td class="amount ' + (l.valor < 0 ? "neg" : "pos") + '">' + brl(l.valor) + "</td>" +
+        '<td class="dup"><span class="flag ' + r[0] + '">' + r[1] + "</span></td>" +
+        "</tr>";
+    }).join("");
+
+    el("contagem").textContent = novos.length + " novos · " + jaConhecidos.length +
+      " já importados" + (repetidosNoArquivo.length ? " · " + repetidosNoArquivo.length + " repetidos" : "");
+
+    /* --- contrapartes --- */
+    var ehBilateral = {};
+    bilaterais.forEach(function (g) { ehBilateral[g.nome] = 1; });
+
+    var lista = Object.keys(grupos).map(function (k) { return grupos[k]; })
+      .sort(function (a, b) { return (Math.abs(b.ent) + Math.abs(b.sai)) - (Math.abs(a.ent) + Math.abs(a.sai)); })
+      .slice(0, 14);
+
+    el("partes").innerHTML = lista.map(function (g) {
+      var giro = g.ent + Math.abs(g.sai);
+      return '<div class="party">' +
+        '<span class="party-name">' + esc(g.nome) +
+          (ehBilateral[g.nome] ? ' <span class="flag velho">entra e sai</span>' : "") + "</span>" +
+        '<span class="party-times">' + g.vezes + "x</span>" +
+        '<span class="party-total ' + (g.total < 0 ? "neg" : "pos") + '">' + brl(giro) + "</span>" +
+        "</div>";
+    }).join("");
+
+    if (!ehExemplo) registrar(novos.map(function (l) { return l.id; }));
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  /* ================= eventos ================= */
+
+  function processar(arquivo) {
+    var leitor = new FileReader();
+    leitor.onload = function (e) {
+      var texto = decodificar(e.target.result);
+      var extrato = /\.csv$/i.test(arquivo.name) ? lerCsv(texto) : (lerOfx(texto) || lerCsv(texto));
+
+      if (!extrato) {
+        el("sample-flag").classList.remove("hidden");
+        el("sample-flag").innerHTML =
+          '<span class="tag" style="background:var(--crit)">Erro</span>' +
+          '<span class="msg">Não consegui ler <strong>' + esc(arquivo.name) + '</strong>. ' +
+          'Se for CSV, preciso de colunas com data, valor e descrição. ' +
+          'Me mande o arquivo que eu ajusto o leitor para o formato do seu banco.</span>';
+        return;
+      }
+
+      ehExemplo = false;
+      mostrandoTudo = false;
+      el("sample-flag").classList.add("hidden");
+      render(extrato, arquivo.name);
+      el("resultado").scrollIntoView({ behavior: "smooth", block: "start" });
+    };
+    leitor.readAsArrayBuffer(arquivo);
+  }
+
+  el("btn-escolher").addEventListener("click", function () { el("arquivo").click(); });
+  el("arquivo").addEventListener("change", function (e) {
+    if (e.target.files && e.target.files[0]) processar(e.target.files[0]);
+  });
+
+  var drop = el("drop");
+  ["dragenter", "dragover"].forEach(function (ev) {
+    drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("over"); });
+  });
+  ["dragleave", "drop"].forEach(function (ev) {
+    drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove("over"); });
+  });
+  drop.addEventListener("drop", function (e) {
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) processar(e.dataTransfer.files[0]);
+  });
+
+  el("btn-exemplo").addEventListener("click", function () {
+    ehExemplo = true;
+    el("sample-flag").classList.remove("hidden");
+    el("sample-flag").innerHTML =
+      '<span class="tag">Exemplo</span>' +
+      '<span class="msg">Estes números são fictícios, criados para demonstração. ' +
+      'Solte seu extrato de verdade para substituí-los.</span>';
+    render(lerOfx(EXEMPLO_OFX), "exemplo.ofx");
+  });
+
+  el("btn-mais").addEventListener("click", function () {
+    mostrandoTudo = true;
+    if (ultimoExtrato) render(ultimoExtrato, ultimoNome);
+  });
+
+  el("btn-esquecer").addEventListener("click", function () {
+    try { localStorage.removeItem(CHAVE); } catch (e) {}
+    var b = el("btn-esquecer");
+    b.textContent = "Memória limpa — importe de novo para testar";
+    setTimeout(function () { b.textContent = "Esquecer o que já foi importado"; }, 2600);
+  });
+
+  render(lerOfx(EXEMPLO_OFX), "exemplo.ofx");
+})();
+</script>

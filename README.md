@@ -68,3 +68,22 @@ Acompanhado do extrato de retiradas por sócio, no mês e no ano.
 - `diagnostico.html` — página de verificação publicada como Artifact. Testa as três
   dependências críticas antes de investir na construção: banco de dados compartilhado,
   visibilidade entre os dois sócios e classificação automática.
+- `leitor-extrato.html` — leitor de OFX/CSV que roda inteiramente no navegador.
+  Deduplicação por FITID, conferência de saldo, normalização de descrição,
+  detecção de contrapartes bilaterais e medidor do teto MEI.
+
+## Aprendido com o extrato real
+
+Validado contra 535 lançamentos de 01/01 a 13/09/2026:
+
+- **O parser lê 535 de 535**, com FITID em todos e nenhum duplicado. O saldo declarado
+  pelo banco bate exatamente com a soma dos lançamentos (saldo inicial implícito de
+  R$ 0,00), provando que o extrato está completo desde a abertura da conta.
+- **`NAME` é a contraparte, `MEMO` só diz "Enviado"/"Recebido"** neste banco. Apostar em
+  um campo só quebra a descrição inteira — a leitura combina os dois sem repetir.
+- **70% dos lançamentos são de contrapartes que se repetem** (65 nomes recorrentes entre
+  223 distintos). É a prova de que a categorização por memória de padrões resolve a maior
+  parte do trabalho sem depender de IA.
+- **Contrapartes que recebem e pagam existem e são grandes.** Somam quase R$ 10 mil em
+  entradas que provavelmente não são faturamento. Contá-las como receita distorce tanto
+  o DRE quanto o cálculo do teto — daí a detecção automática.
