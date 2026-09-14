@@ -783,40 +783,70 @@
 
   /* ===================== armazenamento ===================== */
 
+  // Os snapshots do db chegam CONGELADOS: escrever direto neles lança TypeError
+  // em modo estrito e derruba o carregamento inteiro. Tudo que vem do banco passa
+  // por aqui e vira cópia gravável antes de qualquer parte do app tocar no objeto.
+  function descongelar(v) {
+    if (v == null || typeof v !== "object") return v;
+    if (Array.isArray(v)) return v.map(descongelar);
+    var o = {};
+    Object.keys(v).forEach(function (k) { o[k] = descongelar(v[k]); });
+    return o;
+  }
+
   function carregar() {
-    if (!S.db) return Promise.resolve();
-    return Promise.all([
-      S.db.doc("dados/config").get(),
-      S.db.doc("dados/eventos").get(),
-      S.db.doc("dados/regras").get(),
-      S.db.doc("dados/plano").get(),
-      S.db.doc("dados/divergencias").get(),
-      S.db.collection("lancamentos").get()
-    ]).then(function (r) {
-      if (r[0].exists) {
-        var c = r[0].data() || {};
-        if (typeof c.tetoMei === "number") S.config.tetoMei = c.tetoMei;
-        if (typeof c.mostrarTeto === "boolean") S.config.mostrarTeto = c.mostrarTeto;
-        if (typeof c.reserva === "number") S.config.reserva = c.reserva;
-        if (Array.isArray(c.socios)) S.config.socios = c.socios;
-        if (typeof c.notionDs === "string") S.config.notionDs = c.notionDs;
-        if (typeof c.saldo === "number") { S.saldo = c.saldo; S.saldoEm = c.saldoEm || null; }
-      }
-      if (r[1].exists) S.eventos = (r[1].data() || {}).lista || [];
-      if (r[2].exists) {
-        var g = r[2].data() || {};
-        S.regras = g.mapa || {};
-        S.padroes = g.padroes || [];
-      }
-      if (r[3].exists) {
-        var pl = (r[3].data() || {}).categorias;
-        if (Array.isArray(pl) && pl.length) { S.plano = pl; limparCacheTipo(); }
-      }
-      if (r[4].exists) S.resolvidas = (r[4].data() || {}).chaves || {};
-      r[5].docs.forEach(function (d) {
-        var it = (d.data() || {}).itens;
-        if (Array.isArray(it)) S.lanc[d.id] = it;
+    if (!S.db) return Promise.resolve({ lidos: 0, falhas: ["sem conexão"] });
+
+    var partes = [
+      ["config",       function () { return S.db.doc("dados/config").get(); }],
+      ["eventos",      function () { return S.db.doc("dados/eventos").get(); }],
+      ["regras",       function () { return S.db.doc("dados/regras").get(); }],
+      ["plano",        function () { return S.db.doc("dados/plano").get(); }],
+      ["divergências", function () { return S.db.doc("dados/divergencias").get(); }],
+      ["lançamentos",  function () { return S.db.collection("lancamentos").get(); }]
+    ];
+
+    // Cada leitura é independente: uma que falhe não pode levar as outras junto.
+    return Promise.all(partes.map(function (p) {
+      return p[1]().then(
+        function (r) { return { nome: p[0], ok: true, r: r }; },
+        function (e) { return { nome: p[0], ok: false, cod: (e && e.code) || "erro" }; }
+      );
+    })).then(function (res) {
+      var falhas = [], lidos = 0;
+
+      res.forEach(function (x) {
+        if (!x.ok) { falhas.push(x.nome + " (" + x.cod + ")"); return; }
+        var r = x.r;
+
+        if (x.nome === "config" && r.exists) {
+          var c = descongelar(r.data()) || {};
+          if (typeof c.tetoMei === "number") S.config.tetoMei = c.tetoMei;
+          if (typeof c.mostrarTeto === "boolean") S.config.mostrarTeto = c.mostrarTeto;
+          if (typeof c.reserva === "number") S.config.reserva = c.reserva;
+          if (Array.isArray(c.socios)) S.config.socios = c.socios;
+          if (typeof c.notionDs === "string") S.config.notionDs = c.notionDs;
+          if (typeof c.saldo === "number") { S.saldo = c.saldo; S.saldoEm = c.saldoEm || null; }
+        } else if (x.nome === "eventos" && r.exists) {
+          S.eventos = (descongelar(r.data()) || {}).lista || [];
+        } else if (x.nome === "regras" && r.exists) {
+          var g = descongelar(r.data()) || {};
+          S.regras = g.mapa || {};
+          S.padroes = g.padroes || [];
+        } else if (x.nome === "plano" && r.exists) {
+          var pl = (descongelar(r.data()) || {}).categorias;
+          if (Array.isArray(pl) && pl.length) { S.plano = pl; limparCacheTipo(); }
+        } else if (x.nome === "divergências" && r.exists) {
+          S.resolvidas = (descongelar(r.data()) || {}).chaves || {};
+        } else if (x.nome === "lançamentos") {
+          r.docs.forEach(function (d) {
+            var it = (descongelar(d.data()) || {}).itens;
+            if (Array.isArray(it)) { S.lanc[d.id] = it; lidos += it.length; }
+          });
+        }
       });
+
+      return { lidos: lidos, falhas: falhas };
     });
   }
 
@@ -842,10 +872,17 @@
   function salvarResolv(ok)   { return gravar("dados/divergencias", { chaves: S.resolvidas }, ok); }
   function salvarEventos(ok)  { return gravar("dados/eventos", { lista: S.eventos }, ok); }
   function salvarConfig(ok) {
-    return gravar("dados/config", {
+    var corpo = {
       tetoMei: S.config.tetoMei, mostrarTeto: S.config.mostrarTeto, reserva: S.config.reserva,
-      socios: S.config.socios, notionDs: S.config.notionDs, saldo: S.saldo, saldoEm: S.saldoEm
-    }, ok);
+      socios: S.config.socios, notionDs: S.config.notionDs
+    };
+    // NaN não sobrevive a JSON (vira null) — melhor não gravar o campo do que
+    // gravar um saldo inválido por cima de um saldo bom.
+    if (typeof S.saldo === "number" && !isNaN(S.saldo)) {
+      corpo.saldo = S.saldo;
+      corpo.saldoEm = S.saldoEm || null;
+    }
+    return gravar("dados/config", corpo, ok);
   }
 
   function avisar(tom, msg) {
@@ -1751,27 +1788,50 @@
   montarAjudas();
   pintar();
 
-  if (window.claude && typeof window.claude.use === "function") {
+  if (!window.claude || typeof window.claude.use !== "function") {
+    avisar("warn", "Abra pelo link do artifact no claude.ai para que os dados sejam compartilhados com seu sócio.");
+  } else {
+    var demorou = setTimeout(function () {
+      avisar("warn", "Os dados estão demorando a responder. Se esta mensagem não sumir, recarregue a página.");
+    }, 12000);
+
     window.claude.use("db").then(function (db) {
       if (!db) {
-        avisar("warn", "Não consegui abrir os dados compartilhados. Recarregue a página; " +
-          "se continuar, abra o aplicativo pelo link do artifact.");
+        clearTimeout(demorou);
+        avisar("warn", "Não consegui abrir os dados compartilhados nesta sessão. " +
+          "Recarregue a página; se continuar, abra o aplicativo pelo link do artifact.");
         return;
       }
       S.db = db;
-      return carregar().then(function () {
-        reclassificarTudo();
+      return carregar().then(function (res) {
+        clearTimeout(demorou);
         try {
           var salvo = localStorage.getItem("zicco_eu");
           if (salvo) S.eu = salvo;
         } catch (e) {}
+
+        reclassificarTudo();
         pintar();
+
+        if (res.falhas.length) {
+          avisar("warn", "Parte dos dados não carregou: " + res.falhas.join(", ") +
+            ". O que apareceu na tela está incompleto — recarregue antes de alterar qualquer coisa.");
+          toast("Carregamento incompleto.", "erro");
+        } else if (res.lidos) {
+          $("aviso").hidden = true;
+          toast(res.lidos + " lançamentos carregados.", "info");
+        } else {
+          $("aviso").hidden = true;
+          toast("Conectado. Nenhum lançamento ainda — importe um extrato.", "info");
+        }
       });
-    }).catch(function () {
-      avisar("warn", "Houve um problema ao carregar os dados. Recarregue a página.");
+    }).catch(function (e) {
+      clearTimeout(demorou);
+      // Sem o código do erro na tela não há como diagnosticar à distância.
+      avisar("crit", "Falha ao carregar os dados" + (e && e.code ? " (" + e.code + ")" : "") +
+        (e && e.message ? ": " + e.message : ".") + " Recarregue a página; se persistir, me mande esta mensagem.");
+      toast("Falha ao carregar os dados.", "erro");
     });
-  } else {
-    avisar("warn", "Abra pelo link do artifact no claude.ai para que os dados sejam compartilhados com seu sócio.");
   }
 })();
 </script>

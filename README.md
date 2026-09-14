@@ -109,6 +109,27 @@ Esse desenho saiu de três rodadas contra o extrato real: os critérios frouxos 
 pagamentos de terceiros a "Ingrid Lima" pelo sobrenome, e exigir valor exato sempre fazia
 perder parcelamentos irregulares legítimos.
 
+## Armadilha: os snapshots do banco vêm congelados
+
+O `db` entrega `data()` **congelado**. Como o script roda em modo estrito, escrever
+num objeto vindo do banco lança `TypeError: Cannot assign to read only property` e
+derruba o carregamento inteiro — o app abre vazio e o erro se disfarça de "não salvou".
+
+O sintoma engana: na primeira sessão tudo funciona, porque os objetos nasceram da
+importação do OFX e são graváveis. Só ao **reabrir** é que os dados vêm do banco, e aí
+`reclassificarTudo()` e `conciliar()` quebram na primeira atribuição.
+
+Por isso `carregar()` passa tudo por `descongelar()` antes de entregar ao resto do app.
+Qualquer leitura nova do banco precisa fazer o mesmo.
+
+Duas defesas acompanham a correção:
+
+- **Cada documento é lido de forma independente.** Antes, um `Promise.all` fazia uma
+  leitura com falha levar as outras cinco junto. Agora a tela diz exatamente qual parte
+  não veio e pede para recarregar antes de alterar qualquer coisa.
+- **`NaN` nunca é gravado.** Ele vira `null` em JSON e apagaria silenciosamente um saldo
+  bom; o campo simplesmente não é escrito quando o valor não é um número válido.
+
 ## Números de referência (jan a set/2026)
 
 Servem para detectar regressão em mudanças futuras:
