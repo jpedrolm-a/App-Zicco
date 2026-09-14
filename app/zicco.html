@@ -1,0 +1,1310 @@
+<title>Zicco Financeiro</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --ground:#F1F4F5; --surface:#FFFFFF; --sunk:#E9EEEF;
+    --ink:#121A1C; --soft:#56656A; --faint:#84969B;
+    --line:#DBE3E5; --line2:#C3CFD2;
+    --accent:#0F4C5C; --accent-ink:#FFFFFF; --accent-wash:#E4EFF2;
+    --ember:#C9632A; --ember-wash:#FAEDE4;
+    --ok:#16704A; --ok-wash:#E1F0E8;
+    --warn:#96650A; --warn-wash:#F8EFDC;
+    --crit:#A82A22; --crit-wash:#F8E6E4;
+    --r:10px;
+    --shadow:0 1px 2px rgba(18,26,28,.06), 0 8px 24px -14px rgba(18,26,28,.2);
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:#0B1214; --surface:#121D20; --sunk:#0F1A1D;
+      --ink:#E7EDEE; --soft:#93A3A7; --faint:#6C7E83;
+      --line:#212F33; --line2:#314348;
+      --accent:#59A9BE; --accent-ink:#08171B; --accent-wash:#13292F;
+      --ember:#E08A50; --ember-wash:#2A1D14;
+      --ok:#5EC08D; --ok-wash:#12271E;
+      --warn:#D9A441; --warn-wash:#2A2114;
+      --crit:#E8786C; --crit-wash:#2B1715;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:#0B1214; --surface:#121D20; --sunk:#0F1A1D;
+    --ink:#E7EDEE; --soft:#93A3A7; --faint:#6C7E83;
+    --line:#212F33; --line2:#314348;
+    --accent:#59A9BE; --accent-ink:#08171B; --accent-wash:#13292F;
+    --ember:#E08A50; --ember-wash:#2A1D14;
+    --ok:#5EC08D; --ok-wash:#12271E;
+    --warn:#D9A441; --warn-wash:#2A2114;
+    --crit:#E8786C; --crit-wash:#2B1715;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground); color: var(--ink);
+    font-family:"IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap { max-width:1000px; margin:0 auto; padding-inline:18px; padding-block:26px 70px; }
+
+  /* topo */
+  .top { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-bottom:18px; }
+  .mark {
+    width:32px; height:32px; flex:none; border-radius:8px; background:var(--accent);
+    color:var(--accent-ink); display:grid; place-items:center;
+    font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:16px;
+  }
+  .name { font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:18px; letter-spacing:-.015em; }
+  .role { font-family:"IBM Plex Mono",monospace; font-size:10px; text-transform:uppercase;
+          letter-spacing:.1em; color:var(--faint); margin-top:-3px; }
+  .who { margin-left:auto; display:flex; align-items:center; gap:7px; }
+
+  select, input[type="text"], input[type="number"] {
+    font:inherit; font-size:13.5px; color:var(--ink); background:var(--surface);
+    border:1px solid var(--line2); border-radius:7px; padding:6px 9px; max-width:100%;
+  }
+  select:focus-visible, input:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
+
+  /* abas */
+  nav { display:flex; gap:3px; border-bottom:1px solid var(--line); margin-bottom:22px; overflow-x:auto; }
+  nav button {
+    font:inherit; font-size:14px; font-weight:500; background:none; border:none;
+    color:var(--soft); padding:9px 13px; cursor:pointer; white-space:nowrap;
+    border-bottom:2px solid transparent; margin-bottom:-1px; border-radius:0;
+  }
+  nav button[aria-selected="true"] { color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
+  nav button:focus-visible { outline:2px solid var(--accent); outline-offset:-2px; }
+
+  button {
+    font:inherit; font-size:14px; font-weight:500; border-radius:7px; padding:8px 14px;
+    cursor:pointer; border:1px solid transparent; background:var(--accent); color:var(--accent-ink);
+    transition:opacity .14s ease;
+  }
+  button:hover:not(:disabled){ opacity:.87; }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  button.ghost { background:transparent; color:var(--soft); border-color:var(--line2); }
+  button.mini { font-size:12.5px; padding:5px 10px; }
+
+  h2 { font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:17px;
+       letter-spacing:-.015em; margin:0; }
+  h3 { font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:15px;
+       letter-spacing:-.01em; margin:0; }
+
+  .sec { display:flex; flex-direction:column; gap:13px; margin-bottom:30px; }
+  .sec-head { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:9px; }
+  .muted { font-size:12.5px; color:var(--faint); font-family:"IBM Plex Mono",monospace; }
+
+  /* medidor teto */
+  .gauge { background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+           padding:17px 19px; display:flex; flex-direction:column; gap:11px; box-shadow:var(--shadow); }
+  .gauge-top { display:flex; flex-wrap:wrap; align-items:baseline; gap:9px; }
+  .gauge-num { font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:27px;
+               font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
+  .gauge-of { font-size:13.5px; color:var(--soft); }
+  .gauge-pct { margin-left:auto; font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:15px; }
+  .bar { height:9px; border-radius:99px; background:var(--sunk); overflow:hidden; position:relative; }
+  .bar span { display:block; height:100%; border-radius:99px; transition:width .4s ease; }
+  .bar .proj { position:absolute; top:0; height:100%; border-radius:99px; opacity:.32; }
+  .gauge-note { font-size:13px; color:var(--soft); }
+  .gauge[data-tone="ok"]   .gauge-num, .gauge[data-tone="ok"]   .gauge-pct { color:var(--ok); }
+  .gauge[data-tone="warn"] .gauge-num, .gauge[data-tone="warn"] .gauge-pct { color:var(--warn); }
+  .gauge[data-tone="crit"] .gauge-num, .gauge[data-tone="crit"] .gauge-pct { color:var(--crit); }
+
+  /* tiles */
+  .tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(152px,1fr)); gap:10px; }
+  .tile { background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+          padding:12px 14px; display:flex; flex-direction:column; gap:2px; }
+  .tile-l { font-family:"IBM Plex Mono",monospace; font-size:9.5px; text-transform:uppercase;
+            letter-spacing:.09em; color:var(--faint); }
+  .tile-v { font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:18px;
+            font-variant-numeric:tabular-nums; letter-spacing:-.01em; }
+  .tile-s { font-size:11.5px; color:var(--faint); }
+  .tile[data-tone="in"]  .tile-v { color:var(--ok); }
+  .tile[data-tone="out"] .tile-v { color:var(--crit); }
+
+  /* DRE */
+  .dre { background:var(--surface); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
+  .dre-row { display:flex; align-items:baseline; gap:10px; padding:8px 16px; border-bottom:1px solid var(--line); }
+  .dre-row:last-child { border-bottom:none; }
+  .dre-row .lbl { flex:1 1 auto; min-width:0; font-size:14px; }
+  .dre-row .val { font-family:"IBM Plex Mono",monospace; font-size:13.5px;
+                  font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .dre-row .pc { font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--faint);
+                 width:52px; text-align:right; flex:none; font-variant-numeric:tabular-nums; }
+  .dre-row.sub .lbl { padding-left:15px; font-size:13.5px; color:var(--soft); }
+  .dre-row.sub .val { color:var(--soft); }
+  .dre-row.total { background:var(--sunk); font-weight:600; }
+  .dre-row.total .lbl, .dre-row.total .val { font-weight:600; }
+  .dre-row.key { background:var(--accent-wash); }
+  .dre-row.key .lbl, .dre-row.key .val { font-weight:700; color:var(--accent); }
+  .neg { color:var(--crit); } .pos { color:var(--ok); }
+
+  /* listas / tabelas */
+  .scroll { overflow-x:auto; border:1px solid var(--line); border-radius:var(--r); background:var(--surface); }
+  table { border-collapse:collapse; width:100%; min-width:560px; }
+  th,td { text-align:left; padding:8px 12px; border-bottom:1px solid var(--line); vertical-align:middle; }
+  tr:last-child td { border-bottom:none; }
+  th { font-family:"IBM Plex Mono",monospace; font-size:9.5px; text-transform:uppercase;
+       letter-spacing:.08em; color:var(--faint); font-weight:500; background:var(--sunk); }
+  td.num { font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums;
+           text-align:right; white-space:nowrap; font-size:13px; }
+  td.dt { font-family:"IBM Plex Mono",monospace; font-size:12.5px; white-space:nowrap; }
+  td.txt { font-size:13.5px; overflow-wrap:anywhere; min-width:170px; }
+  .sub2 { font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--faint); overflow-wrap:anywhere; }
+  td select { font-size:12.5px; padding:4px 7px; max-width:210px; }
+
+  .pill { font-family:"IBM Plex Mono",monospace; font-size:9.5px; text-transform:uppercase;
+          letter-spacing:.06em; padding:2px 7px; border-radius:99px; white-space:nowrap;
+          background:var(--sunk); color:var(--faint); }
+  .pill.ok { background:var(--ok-wash); color:var(--ok); }
+  .pill.warn { background:var(--warn-wash); color:var(--warn); }
+  .pill.crit { background:var(--crit-wash); color:var(--crit); }
+  .pill.auto { background:var(--accent-wash); color:var(--accent); }
+
+  /* cartões de alerta */
+  .card { background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--line2);
+          border-radius:var(--r); padding:12px 15px; display:flex; gap:11px; align-items:flex-start; }
+  .card[data-tone="ok"]  { border-left-color:var(--ok); }
+  .card[data-tone="warn"]{ border-left-color:var(--warn); }
+  .card[data-tone="crit"]{ border-left-color:var(--crit); }
+  .card-i { flex:none; width:18px; height:18px; margin-top:2px; border-radius:50%; display:grid;
+            place-items:center; font-size:10.5px; font-weight:700; color:#fff; background:var(--faint); }
+  .card[data-tone="ok"]   .card-i { background:var(--ok); }
+  .card[data-tone="warn"] .card-i { background:var(--warn); }
+  .card[data-tone="crit"] .card-i { background:var(--crit); }
+  .card-t { flex:1 1 auto; min-width:0; }
+  .card-h { font-weight:600; font-size:14px; }
+  .card-b { font-size:13px; color:var(--soft); overflow-wrap:anywhere; }
+  .cards { display:flex; flex-direction:column; gap:8px; }
+
+  /* dropzone */
+  .drop { border:1.5px dashed var(--line2); border-radius:var(--r); background:var(--surface);
+          padding:18px; display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
+  .drop.over { border-color:var(--accent); background:var(--accent-wash); }
+  input[type="file"] { display:none; }
+
+  /* barras simples */
+  .barlist { display:flex; flex-direction:column; gap:1px; background:var(--line);
+             border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
+  .barrow { background:var(--surface); padding:9px 13px; display:flex; align-items:center; gap:11px; }
+  .barrow .bn { flex:1 1 auto; min-width:0; font-size:13.5px; overflow-wrap:anywhere; }
+  .barrow .bt { font-family:"IBM Plex Mono",monospace; font-size:13px; font-variant-numeric:tabular-nums;
+                flex:none; white-space:nowrap; font-weight:500; }
+  .track { flex:0 0 88px; height:6px; border-radius:99px; background:var(--sunk); overflow:hidden; }
+  .track span { display:block; height:100%; background:var(--accent); border-radius:99px; }
+
+  .row { display:flex; flex-wrap:wrap; gap:9px; align-items:center; }
+  .note { font-size:13px; color:var(--soft); border-top:1px solid var(--line); padding-top:14px; }
+  .note strong { color:var(--ink); font-weight:600; }
+  .empty { padding:22px; text-align:center; color:var(--faint); font-size:13.5px;
+           background:var(--surface); border:1px solid var(--line); border-radius:var(--r); }
+  [hidden] { display:none !important; }
+
+  .banner { border-radius:var(--r); padding:11px 15px; font-size:13.5px; display:flex;
+            flex-wrap:wrap; gap:9px; align-items:center; margin-bottom:16px; }
+  .banner.warn { background:var(--warn-wash); }
+  .banner.crit { background:var(--crit-wash); }
+  .banner .msg { flex:1 1 200px; min-width:0; }
+
+  @media (prefers-reduced-motion: reduce){ *{ transition-duration:.01ms !important; } }
+  @media (max-width:520px){ .who { margin-left:0; width:100%; } }
+</style>
+
+<div class="wrap">
+
+  <header class="top">
+    <div class="mark">Z</div>
+    <div>
+      <div class="name">Zicco</div>
+      <div class="role">Controle financeiro</div>
+    </div>
+    <div class="who">
+      <label for="sel-socio" class="muted">Sou</label>
+      <select id="sel-socio">
+        <option value="">—</option>
+      </select>
+    </div>
+  </header>
+
+  <div class="banner warn" id="aviso" hidden>
+    <span class="msg" id="aviso-msg"></span>
+  </div>
+
+  <nav role="tablist">
+    <button role="tab" aria-selected="true"  data-aba="painel">Painel</button>
+    <button role="tab" aria-selected="false" data-aba="lancamentos">Lançamentos</button>
+    <button role="tab" aria-selected="false" data-aba="eventos">Eventos</button>
+    <button role="tab" aria-selected="false" data-aba="divergencias">Divergências <span class="pill crit" id="badge-div" hidden>0</span></button>
+  </nav>
+
+  <!-- ============ PAINEL ============ -->
+  <section id="aba-painel">
+
+    <div class="sec">
+      <div class="sec-head">
+        <h2>Teto do MEI</h2>
+        <span class="muted" id="teto-ano">—</span>
+      </div>
+      <div class="gauge" id="gauge" data-tone="ok">
+        <div class="gauge-top">
+          <span class="gauge-num" id="teto-val">—</span>
+          <span class="gauge-of" id="teto-de">—</span>
+          <span class="gauge-pct" id="teto-pct">—</span>
+        </div>
+        <div class="bar">
+          <span class="proj" id="bar-proj" style="width:0"></span>
+          <span id="bar-real" style="width:0"></span>
+        </div>
+        <div class="gauge-note" id="teto-nota">—</div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h2>Quanto posso retirar</h2>
+      <div class="tiles" id="tiles-retirada"></div>
+      <div class="scroll" id="box-socios"></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head">
+        <h2>Resultado</h2>
+        <select id="sel-periodo"><option value="ano">Ano todo</option></select>
+      </div>
+      <div class="dre" id="dre"></div>
+    </div>
+
+    <div class="sec">
+      <h2>Para onde vai o dinheiro</h2>
+      <div class="barlist" id="top-saidas"></div>
+    </div>
+
+  </section>
+
+  <!-- ============ LANÇAMENTOS ============ -->
+  <section id="aba-lancamentos" hidden>
+
+    <div class="sec">
+      <h2>Importar extrato</h2>
+      <div class="drop" id="drop">
+        <div style="flex:1 1 220px;min-width:0;">
+          <div style="font-weight:600;">Arraste o arquivo OFX do banco</div>
+          <div style="font-size:13px;color:var(--soft);">Lançamento já importado nunca entra duas vezes</div>
+        </div>
+        <button id="btn-arq">Escolher arquivo</button>
+        <input type="file" id="arq" accept=".ofx,.OFX,.csv,.CSV,.txt">
+      </div>
+      <div class="cards" id="import-res"></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head">
+        <h2>Lançamentos</h2>
+        <div class="row">
+          <select id="filtro-cat">
+            <option value="">Todas as situações</option>
+            <option value="pendente">Só os não classificados</option>
+            <option value="auto">Classificados automaticamente</option>
+          </select>
+          <select id="filtro-mes"><option value="">Todos os meses</option></select>
+        </div>
+      </div>
+      <div class="scroll" id="box-lanc"></div>
+      <div class="row">
+        <button class="ghost mini" id="btn-mais" hidden>Mostrar mais</button>
+        <span class="muted" id="lanc-contagem"></span>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ============ EVENTOS ============ -->
+  <section id="aba-eventos" hidden>
+    <div class="sec">
+      <div class="sec-head">
+        <h2>Funil comercial</h2>
+        <span class="muted" id="funil-conv">—</span>
+      </div>
+      <div class="tiles" id="tiles-funil"></div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head">
+        <h2>Eventos</h2>
+        <select id="filtro-status"><option value="">Todos os status</option></select>
+      </div>
+      <div class="scroll" id="box-eventos"></div>
+    </div>
+  </section>
+
+  <!-- ============ DIVERGÊNCIAS ============ -->
+  <section id="aba-divergencias" hidden>
+    <div class="sec">
+      <div class="sec-head">
+        <h2>Precisa da sua validação</h2>
+        <span class="muted">o que não fecha, ou não faz sentido</span>
+      </div>
+      <div class="cards" id="lista-div"></div>
+    </div>
+  </section>
+
+  <p class="note">
+    <strong>Como ele aprende:</strong> toda vez que você corrige a categoria de um lançamento,
+    o aplicativo memoriza aquele fornecedor e aplica a mesma categoria sozinho da próxima vez.
+    Quanto mais você usa, menos trabalho dá.
+  </p>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ===================== plano de contas ===================== */
+
+  var PLANO = [
+    ["Receita",          "Receita de eventos",                 "receita"],
+    ["Receita",          "Receita de feiras",                  "receita"],
+    ["Receita",          "Outras receitas",                    "receita"],
+    ["Deduções",         "DAS MEI",                            "deducao"],
+    ["Deduções",         "Taxa de maquininha",                 "deducao"],
+    ["Custos diretos",   "Insumos alimentícios",               "custo"],
+    ["Custos diretos",   "Bebidas",                            "custo"],
+    ["Custos diretos",   "Descartáveis e embalagens",          "custo"],
+    ["Custos diretos",   "Gás",                                "custo"],
+    ["Custos diretos",   "Mão de obra de evento",              "custo"],
+    ["Custos diretos",   "Combustível e logística",            "custo"],
+    ["Custos diretos",   "Taxa de participação em feira",      "custo"],
+    ["Despesas fixas",   "Marketing e vendas",                 "despesa"],
+    ["Despesas fixas",   "Tarifas bancárias",                  "despesa"],
+    ["Despesas fixas",   "Manutenção de equipamentos",         "despesa"],
+    ["Despesas fixas",   "Ocupação (aluguel, energia, água)",  "despesa"],
+    ["Despesas fixas",   "Administrativas e software",         "despesa"],
+    ["Sócios",           "Retirada de sócio",                  "retirada"],
+    ["Sócios",           "Reembolso a sócio",                  "reembolso"],
+    ["Sócios",           "Aporte de sócio",                    "aporte"],
+    ["Fora do resultado","Transferência entre contas próprias","transferencia"],
+    ["Fora do resultado","Parcela de equipamento",             "financiamento"],
+    ["Fora do resultado","Compra de equipamento",              "investimento"],
+    ["Fora do resultado","A classificar",                      "pendente"]
+  ];
+
+  var TIPO = {};
+  PLANO.forEach(function (p) { TIPO[p[1]] = p[2]; });
+  var PENDENTE = "A classificar";
+
+  /* ===================== normalização ===================== */
+
+  var OPERACOES = /\b(PIX\s+(ENVIADO|RECEBIDO|QRS|QRE|DEB|CRED)|PIX|ENVIADO|RECEBIDO|TED|DOC|TEV|TRANSFERENCIA\s+(ENVIADA|RECEBIDA)|TRANSFERENCIA|PAGAMENTO\s+DE\s+CONTA|PAGAMENTO|PAGTO|COMPRA\s+CARTAO|COMPRA|DEBITO\s+AUTOMATICO|DEB\s+AUT|SAQUE|DEPOSITO|RECEBIMENTO|ENVIO|LIQUIDACAO)\b/g;
+  var SUFIXOS = /\b(LTDA|EIRELI|EPP|MEI|COM|COMERCIO|COMERCIAL|IND|INDUSTRIA|DISTRIBUIDORA|DISTRIB|SERVICOS|SERV)\b/g;
+
+  function normalizar(texto) {
+    var t = String(texto).toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    t = t.replace(OPERACOES, " ");
+    t = t.replace(/\b\d{1,2}[\/.-]\d{1,2}([\/.-]\d{2,4})?\b/g, " ");
+    t = t.replace(/\b\d{2,3}[.\d]{6,}[-\/]?\d{0,4}\b/g, " ");
+    t = t.replace(/\b\d{5,}\b/g, " ");
+    t = t.replace(SUFIXOS, " ");
+    t = t.replace(/\s+(ME|SA|S\/A)\s*$/g, " ");
+    return t.replace(/[^A-Z0-9 ]/g, " ").replace(/\s+/g, " ").trim() || "(indefinido)";
+  }
+
+  /* ===================== leitura OFX / CSV ===================== */
+
+  function decodificar(buf) {
+    var b = new Uint8Array(buf);
+    var u = new TextDecoder("utf-8").decode(b);
+    if (u.indexOf("\uFFFD") === -1) return u;
+    try { return new TextDecoder("windows-1252").decode(b); } catch (e) { return u; }
+  }
+  function campo(bloco, nome) {
+    var m = new RegExp("<" + nome + ">([^<\\r\\n]*)", "i").exec(bloco);
+    return m ? m[1].trim() : "";
+  }
+  function dataOfx(b) {
+    var d = String(b).replace(/[^0-9]/g, "").slice(0, 8);
+    return d.length === 8 ? d.slice(0, 4) + "-" + d.slice(4, 6) + "-" + d.slice(6, 8) : null;
+  }
+  function num(b) {
+    if (!b) return NaN;
+    var s = String(b).trim().replace(/\s/g, "");
+    if (s.indexOf(",") > -1 && s.indexOf(".") > -1) s = s.replace(/\./g, "").replace(",", ".");
+    else if (s.indexOf(",") > -1) s = s.replace(",", ".");
+    return parseFloat(s);
+  }
+  // Bancos repartem a descrição entre NAME e MEMO de formas diferentes; junta sem repetir.
+  function descricaoDe(corpo) {
+    var n = campo(corpo, "NAME"), m = campo(corpo, "MEMO");
+    if (n && m) {
+      var N = n.toUpperCase(), M = m.toUpperCase();
+      if (N.indexOf(M) > -1) return n;
+      if (M.indexOf(N) > -1) return m;
+      return n + " · " + m;
+    }
+    return n || m || "(sem descrição)";
+  }
+
+  function lerOfx(txt) {
+    var blocos = txt.split(/<STMTTRN>/i).slice(1);
+    if (!blocos.length) return null;
+    var out = [];
+    blocos.forEach(function (b, i) {
+      var c = b.split(/<\/STMTTRN>/i)[0];
+      var v = num(campo(c, "TRNAMT")), d = dataOfx(campo(c, "DTPOSTED"));
+      if (isNaN(v) || !d) return;
+      var desc = descricaoDe(c);
+      var fit = campo(c, "FITID");
+      out.push({ id: fit || ("s-" + d + "-" + v.toFixed(2) + "-" + i), data: d, valor: v, desc: desc });
+    });
+    if (!out.length) return null;
+    return {
+      lancamentos: out,
+      saldo: num(campo(txt, "BALAMT")),
+      saldoEm: dataOfx(campo(txt, "DTASOF")),
+      inicio: dataOfx(campo(txt, "DTSTART")),
+      fim: dataOfx(campo(txt, "DTEND"))
+    };
+  }
+
+  /* ===================== estado ===================== */
+
+  var S = {
+    db: null, gravavel: null,
+    config: { tetoMei: 81000, reserva: 3000, socios: [] },
+    eventos: [],
+    regras: {},        // descrição normalizada -> categoria (memória exata)
+    padroes: [],       // [trecho, categoria] (regras por conteúdo)
+    lanc: {},          // "YYYY-MM" -> [ {id,data,valor,desc,limpa,cat,auto,evento} ]
+    saldo: NaN, saldoEm: null,
+    aba: "painel", limite: 60, eu: ""
+  };
+
+  function todosLanc() {
+    var out = [];
+    Object.keys(S.lanc).forEach(function (m) { out = out.concat(S.lanc[m]); });
+    return out.sort(function (a, b) { return a.data < b.data ? 1 : -1; });
+  }
+
+  /* ===================== formato ===================== */
+
+  function brl(v) {
+    if (typeof v !== "number" || isNaN(v)) return "—";
+    return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+  }
+  function brl2(v) {
+    if (typeof v !== "number" || isNaN(v)) return "—";
+    return v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  }
+  function dbr(iso) { if (!iso) return "—"; var p = iso.split("-"); return p[2] + "/" + p[1]; }
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+
+  /* ===================== classificação ===================== */
+
+  function classificar(limpa, valor) {
+    if (S.regras[limpa]) return { cat: S.regras[limpa], auto: true };
+    for (var i = 0; i < S.padroes.length; i++) {
+      if (limpa.indexOf(S.padroes[i][0]) > -1) return { cat: S.padroes[i][1], auto: true };
+    }
+    // Uma entrada que não caiu em nenhuma regra é, quase sempre, cliente pagando.
+    // Saída desconhecida fica pendente: errar a despesa distorce o resultado.
+    if (typeof valor === "number" && valor > 0) return { cat: "Receita de eventos", auto: true };
+    return { cat: PENDENTE, auto: false };
+  }
+
+  function reclassificarTudo() {
+    Object.keys(S.lanc).forEach(function (m) {
+      S.lanc[m].forEach(function (l) {
+        if (l.manual) return;
+        var r = classificar(l.limpa, l.valor);
+        l.cat = r.cat; l.auto = r.auto;
+      });
+    });
+  }
+
+  /* ===================== armazenamento ===================== */
+
+  function chaveMes(d) { return d.slice(0, 7); }
+
+  function carregar() {
+    if (!S.db) return Promise.resolve();
+    var jobs = [
+      S.db.doc("dados/config").get(),
+      S.db.doc("dados/eventos").get(),
+      S.db.doc("dados/regras").get(),
+      S.db.collection("lancamentos").get()
+    ];
+    return Promise.all(jobs).then(function (r) {
+      if (r[0].exists) {
+        var c = r[0].data() || {};
+        if (typeof c.tetoMei === "number") S.config.tetoMei = c.tetoMei;
+        if (typeof c.reserva === "number") S.config.reserva = c.reserva;
+        if (Array.isArray(c.socios)) S.config.socios = c.socios;
+        if (typeof c.saldo === "number") { S.saldo = c.saldo; S.saldoEm = c.saldoEm || null; }
+      }
+      if (r[1].exists) S.eventos = (r[1].data() || {}).lista || [];
+      if (r[2].exists) {
+        var g = r[2].data() || {};
+        S.regras = g.mapa || {};
+        S.padroes = g.padroes || [];
+      }
+      r[3].docs.forEach(function (d) {
+        var it = (d.data() || {}).itens;
+        if (Array.isArray(it)) S.lanc[d.id] = it;
+      });
+    });
+  }
+
+  function salvarMes(mes) {
+    if (!S.db || S.gravavel === false) return Promise.resolve();
+    return S.db.doc("lancamentos/" + mes).set({ itens: S.lanc[mes] })
+      .catch(function (e) { falhaEscrita(e); });
+  }
+  function salvarRegras() {
+    if (!S.db || S.gravavel === false) return Promise.resolve();
+    return S.db.doc("dados/regras").set({ mapa: S.regras, padroes: S.padroes })
+      .catch(function (e) { falhaEscrita(e); });
+  }
+  function salvarConfig() {
+    if (!S.db || S.gravavel === false) return Promise.resolve();
+    return S.db.doc("dados/config").set({
+      tetoMei: S.config.tetoMei, reserva: S.config.reserva, socios: S.config.socios,
+      saldo: S.saldo, saldoEm: S.saldoEm
+    }).catch(function (e) { falhaEscrita(e); });
+  }
+  function falhaEscrita(e) {
+    S.gravavel = false;
+    aviso("warn", "Este acesso é somente leitura, então nada que você mudar aqui será salvo. " +
+      "Quem abriu o aplicativo precisa dar permissão de edição no menu de compartilhar. " +
+      (e && e.code ? "(" + e.code + ")" : ""));
+  }
+
+  function aviso(tom, msg) {
+    var b = $("aviso");
+    b.className = "banner " + tom;
+    $("aviso-msg").textContent = msg;
+    b.hidden = false;
+  }
+
+  /* ===================== cálculos ===================== */
+
+  function anoCorrente() {
+    var anos = {};
+    todosLanc().forEach(function (l) { anos[l.data.slice(0, 4)] = 1; });
+    var ks = Object.keys(anos).sort();
+    return ks.length ? ks[ks.length - 1] : String(new Date().getFullYear());
+  }
+
+  function somaPorTipo(lista) {
+    var s = {};
+    lista.forEach(function (l) {
+      var t = TIPO[l.cat] || "pendente";
+      s[t] = (s[t] || 0) + l.valor;
+    });
+    return s;
+  }
+
+  function filtrarPeriodo(p) {
+    var todos = todosLanc();
+    if (p === "ano") { var a = anoCorrente(); return todos.filter(function (l) { return l.data.slice(0, 4) === a; }); }
+    return todos.filter(function (l) { return l.data.slice(0, 7) === p; });
+  }
+
+  function calcDre(lista) {
+    var receita = 0, deducao = 0, custo = 0, despesa = 0;
+    var det = {};
+    lista.forEach(function (l) {
+      var t = TIPO[l.cat] || "pendente";
+      if (t === "receita") receita += l.valor;
+      else if (t === "deducao") deducao += Math.abs(l.valor);
+      else if (t === "custo") custo += Math.abs(l.valor);
+      else if (t === "despesa") despesa += Math.abs(l.valor);
+      else return;
+      det[l.cat] = (det[l.cat] || 0) + Math.abs(l.valor);
+    });
+    var liquida = receita - deducao;
+    var margem = liquida - custo;
+    return { receita: receita, deducao: deducao, liquida: liquida, custo: custo,
+             margem: margem, despesa: despesa, resultado: margem - despesa, det: det };
+  }
+
+  /* ===================== render: painel ===================== */
+
+  function renderTeto() {
+    var ano = anoCorrente();
+    var doAno = todosLanc().filter(function (l) { return l.data.slice(0, 4) === ano; });
+    var fat = 0, ultima = "";
+    doAno.forEach(function (l) {
+      if ((TIPO[l.cat] || "") === "receita") fat += l.valor;
+      if (l.data > ultima) ultima = l.data;
+    });
+
+    var teto = S.config.tetoMei;
+    var pct = teto > 0 ? fat / teto : 0;
+
+    // pipeline: eventos que ainda vão gerar receita neste ano
+    var conf = 0, orc = 0;
+    S.eventos.forEach(function (e) {
+      if (!e.data || e.data.slice(0, 4) !== ano) return;
+      if (e.data <= ultima) return;
+      if (e.status === "Evento Confirmado") conf += (e.orcado || 0);
+      else if (e.status === "Orçamento Enviado") orc += (e.orcado || 0);
+    });
+    var conv = taxaConversao();
+    var projetado = fat + conf + orc * conv;
+    var pctProj = teto > 0 ? projetado / teto : 0;
+
+    var tom = pctProj >= 1 ? "crit" : (pctProj >= 0.85 || pct >= 0.8 ? "warn" : "ok");
+    $("gauge").setAttribute("data-tone", tom);
+    $("teto-ano").textContent = ano;
+    $("teto-val").textContent = brl(fat);
+    $("teto-de").textContent = "de " + brl(teto) + " já faturados";
+    $("teto-pct").textContent = Math.round(pct * 100) + "%";
+    $("bar-real").style.width = Math.min(100, pct * 100) + "%";
+    $("bar-real").style.background = tom === "crit" ? "var(--crit)" : (tom === "warn" ? "var(--warn)" : "var(--ok)");
+    $("bar-proj").style.width = Math.min(100, pctProj * 100) + "%";
+    $("bar-proj").style.background = "var(--ember)";
+
+    var nota;
+    if (!S.eventos.length) {
+      nota = "Sem eventos carregados ainda, então a projeção considera só o que já entrou.";
+    } else if (projetado >= teto) {
+      nota = "Somando os eventos já confirmados (" + brl(conf) + ") e os orçamentos em aberto ajustados pela sua conversão de " +
+             Math.round(conv * 100) + "% (" + brl(orc * conv) + "), a projeção chega a " + brl(projetado) +
+             " — acima do teto. E ainda faltam os eventos que você vai fechar até dezembro.";
+    } else {
+      nota = "Projeção com os eventos já no funil: " + brl(projetado) + ", ou " + Math.round(pctProj * 100) +
+             "% do teto. Sobra " + brl(teto - projetado) + " antes do limite.";
+    }
+    $("teto-nota").textContent = nota;
+  }
+
+  function taxaConversao() {
+    var c = 0, p = 0;
+    S.eventos.forEach(function (e) {
+      if (e.status === "Concluído") c++;
+      else if (e.status === "Perdido") p++;
+    });
+    return (c + p) > 0 ? c / (c + p) : 0.75;
+  }
+
+  function renderRetirada() {
+    var todos = todosLanc();
+    var caixa = !isNaN(S.saldo) ? S.saldo : todos.reduce(function (s, l) { return s + l.valor; }, 0);
+
+    // compromissos: custo dos eventos confirmados ainda por acontecer, estimado pela margem histórica
+    var hoje = new Date().toISOString().slice(0, 10);
+    var receitaFutura = 0;
+    S.eventos.forEach(function (e) {
+      if (e.status === "Evento Confirmado" && e.data && e.data >= hoje) receitaFutura += (e.orcado || 0);
+    });
+    var d = calcDre(filtrarPeriodo("ano"));
+    var pctCusto = d.receita > 0 ? d.custo / d.receita : 0.5;
+    var custoFuturo = receitaFutura * pctCusto;
+
+    var disponivel = caixa - custoFuturo - S.config.reserva;
+
+    // pró-labore sustentável: resultado médio mensal dos últimos meses
+    var meses = Object.keys(S.lanc).sort();
+    var ult = meses.slice(-6);
+    var somaRes = 0, n = 0;
+    ult.forEach(function (m) {
+      var dd = calcDre(S.lanc[m]);
+      somaRes += dd.resultado; n++;
+    });
+    var sustentavel = n > 0 ? somaRes / n : 0;
+    var porSocio = S.config.socios.length ? sustentavel / S.config.socios.length : sustentavel / 2;
+
+    $("tiles-retirada").innerHTML = [
+      tile("Caixa hoje", brl(caixa), S.saldoEm ? "saldo em " + dbr(S.saldoEm) : "soma dos lançamentos", ""),
+      tile("Custo dos eventos já fechados", brl(custoFuturo), receitaFutura > 0 ? brl(receitaFutura) + " a realizar" : "nenhum confirmado", "out"),
+      tile("Reserva de segurança", brl(S.config.reserva), "definida por vocês", ""),
+      tile("Disponível para retirada", brl(disponivel), disponivel >= 0 ? "pode sair do caixa" : "não há folga", disponivel >= 0 ? "in" : "out"),
+      tile("Pró-labore sustentável", brl(porSocio > 0 ? porSocio : 0), "por sócio, ao mês", porSocio > 0 ? "in" : "out")
+    ].join("");
+
+    // retiradas por sócio
+    var porNome = {};
+    todos.forEach(function (l) {
+      var t = TIPO[l.cat] || "";
+      if (t !== "retirada" && t !== "aporte" && t !== "reembolso") return;
+      var quem = l.socio || l.limpa;
+      if (!porNome[quem]) porNome[quem] = { retirada: 0, reembolso: 0, aporte: 0 };
+      if (t === "retirada") porNome[quem].retirada += Math.abs(l.valor);
+      else if (t === "reembolso") porNome[quem].reembolso += Math.abs(l.valor);
+      else porNome[quem].aporte += Math.abs(l.valor);
+    });
+
+    var nomes = Object.keys(porNome);
+    if (!nomes.length) {
+      $("box-socios").innerHTML = '<div class="empty">Nenhuma retirada classificada ainda. ' +
+        'Marque os lançamentos dos sócios como “Retirada de sócio”, “Reembolso a sócio” ou “Aporte de sócio” na aba Lançamentos.</div>';
+      return;
+    }
+    var linhas = nomes.map(function (k) {
+      var v = porNome[k];
+      var liq = v.retirada - v.aporte;
+      return "<tr><td class='txt'>" + esc(k) + "</td>" +
+        "<td class='num'>" + brl(v.retirada) + "</td>" +
+        "<td class='num'>" + brl(v.reembolso) + "</td>" +
+        "<td class='num'>" + brl(v.aporte) + "</td>" +
+        "<td class='num " + (liq > 0 ? "neg" : "pos") + "'>" + brl(liq) + "</td></tr>";
+    }).join("");
+    $("box-socios").innerHTML = "<table><thead><tr><th>Sócio</th><th style='text-align:right'>Retiradas</th>" +
+      "<th style='text-align:right'>Reembolsos</th><th style='text-align:right'>Aportes</th>" +
+      "<th style='text-align:right'>Líquido</th></tr></thead><tbody>" + linhas + "</tbody></table>";
+  }
+
+  function tile(l, v, s, tone) {
+    return '<div class="tile" data-tone="' + tone + '"><div class="tile-l">' + esc(l) + '</div>' +
+           '<div class="tile-v">' + v + '</div><div class="tile-s">' + esc(s) + '</div></div>';
+  }
+
+  function renderDre() {
+    var p = $("sel-periodo").value || "ano";
+    var d = calcDre(filtrarPeriodo(p));
+    var base = d.receita || 1;
+    var pc = function (v) { return d.receita ? Math.round(v / base * 100) + "%" : "—"; };
+
+    function row(lbl, val, cls, pct) {
+      return '<div class="dre-row ' + (cls || "") + '"><span class="lbl">' + esc(lbl) + '</span>' +
+             '<span class="pc">' + (pct || "") + '</span>' +
+             '<span class="val">' + val + '</span></div>';
+    }
+    function grupo(nome) {
+      return PLANO.filter(function (x) { return x[0] === nome; })
+        .filter(function (x) { return d.det[x[1]]; })
+        .map(function (x) { return row(x[1], "− " + brl(d.det[x[1]]), "sub", pc(d.det[x[1]])); }).join("");
+    }
+
+    var h = "";
+    h += row("Receita bruta", brl(d.receita), "total", "100%");
+    if (d.deducao) { h += grupo("Deduções"); h += row("Receita líquida", brl(d.liquida), "total", pc(d.liquida)); }
+    h += grupo("Custos diretos");
+    h += row("Margem de contribuição", brl(d.margem), "key", pc(d.margem));
+    h += grupo("Despesas fixas");
+    h += row("Resultado do período", brl(d.resultado), "total", pc(d.resultado));
+    $("dre").innerHTML = h;
+  }
+
+  function renderTopSaidas() {
+    var p = $("sel-periodo").value || "ano";
+    var g = {};
+    filtrarPeriodo(p).forEach(function (l) {
+      var t = TIPO[l.cat] || "";
+      if (t !== "custo" && t !== "despesa" && t !== "deducao") return;
+      g[l.cat] = (g[l.cat] || 0) + Math.abs(l.valor);
+    });
+    var arr = Object.keys(g).map(function (k) { return { n: k, v: g[k] }; })
+      .sort(function (a, b) { return b.v - a.v; }).slice(0, 8);
+    if (!arr.length) { $("top-saidas").innerHTML = '<div class="empty">Nada classificado ainda neste período.</div>'; return; }
+    var max = arr[0].v;
+    $("top-saidas").innerHTML = arr.map(function (x) {
+      return '<div class="barrow"><span class="bn">' + esc(x.n) + '</span>' +
+        '<span class="track"><span style="width:' + Math.round(x.v / max * 100) + '%"></span></span>' +
+        '<span class="bt">' + brl(x.v) + '</span></div>';
+    }).join("");
+  }
+
+  /* ===================== render: lançamentos ===================== */
+
+  function opcoesCategoria(sel) {
+    var grupos = {};
+    PLANO.forEach(function (p) { (grupos[p[0]] = grupos[p[0]] || []).push(p[1]); });
+    return Object.keys(grupos).map(function (g) {
+      return '<optgroup label="' + esc(g) + '">' + grupos[g].map(function (c) {
+        return '<option value="' + esc(c) + '"' + (c === sel ? " selected" : "") + ">" + esc(c) + "</option>";
+      }).join("") + "</optgroup>";
+    }).join("");
+  }
+
+  function renderLanc() {
+    var fc = $("filtro-cat").value, fm = $("filtro-mes").value;
+    var lista = todosLanc().filter(function (l) {
+      if (fm && l.data.slice(0, 7) !== fm) return false;
+      if (fc === "pendente" && l.cat !== PENDENTE) return false;
+      if (fc === "auto" && !l.auto) return false;
+      return true;
+    });
+
+    $("lanc-contagem").textContent = lista.length + " lançamentos";
+    var mostrar = lista.slice(0, S.limite);
+    $("btn-mais").hidden = lista.length <= S.limite;
+
+    if (!lista.length) {
+      $("box-lanc").innerHTML = '<div class="empty">Nenhum lançamento aqui. Importe um extrato acima.</div>';
+      return;
+    }
+
+    var linhas = mostrar.map(function (l) {
+      var marca = l.manual ? '<span class="pill ok">você</span>'
+        : (l.auto ? '<span class="pill auto">auto</span>' : '<span class="pill warn">pendente</span>');
+      return "<tr data-id='" + esc(l.id) + "'>" +
+        "<td class='dt'>" + dbr(l.data) + "</td>" +
+        "<td class='txt'>" + esc(l.desc) + "<div class='sub2'>" + esc(l.limpa) + "</div></td>" +
+        "<td class='num " + (l.valor < 0 ? "neg" : "pos") + "'>" + brl2(l.valor) + "</td>" +
+        "<td><select data-cat='" + esc(l.id) + "'>" + opcoesCategoria(l.cat) + "</select></td>" +
+        "<td>" + marca + "</td></tr>";
+    }).join("");
+
+    $("box-lanc").innerHTML = "<table><thead><tr><th>Data</th><th>Descrição</th>" +
+      "<th style='text-align:right'>Valor</th><th>Categoria</th><th>Origem</th></tr></thead><tbody>" +
+      linhas + "</tbody></table>";
+
+    Array.prototype.forEach.call($("box-lanc").querySelectorAll("select[data-cat]"), function (sel) {
+      sel.addEventListener("change", function () { mudarCategoria(sel.getAttribute("data-cat"), sel.value); });
+    });
+  }
+
+  function acharLanc(id) {
+    var achado = null;
+    Object.keys(S.lanc).forEach(function (m) {
+      S.lanc[m].forEach(function (l) { if (l.id === id) achado = { l: l, mes: m }; });
+    });
+    return achado;
+  }
+
+  function mudarCategoria(id, cat) {
+    var a = acharLanc(id);
+    if (!a) return;
+    a.l.cat = cat; a.l.manual = true; a.l.auto = false;
+
+    // aprende: mesma descrição limpa passa a receber a mesma categoria
+    if (cat !== PENDENTE) {
+      S.regras[a.l.limpa] = cat;
+      var mudados = {};
+      Object.keys(S.lanc).forEach(function (m) {
+        S.lanc[m].forEach(function (l) {
+          if (l.id !== id && !l.manual && l.limpa === a.l.limpa && l.cat !== cat) {
+            l.cat = cat; l.auto = true; mudados[m] = 1;
+          }
+        });
+      });
+      Object.keys(mudados).forEach(salvarMes);
+      salvarRegras();
+    }
+    salvarMes(a.mes);
+    pintar();
+  }
+
+  /* ===================== render: eventos ===================== */
+
+  function renderEventos() {
+    if (!S.eventos.length) {
+      $("box-eventos").innerHTML = '<div class="empty">Nenhum evento carregado.</div>';
+      $("tiles-funil").innerHTML = "";
+      return;
+    }
+    var st = {};
+    S.eventos.forEach(function (e) {
+      var k = e.status || "Sem status";
+      if (!st[k]) st[k] = { n: 0, v: 0, p: 0 };
+      st[k].n++; st[k].v += (e.orcado || 0); st[k].p += (e.pessoas || 0);
+    });
+
+    var ordem = ["Novos Clientes", "Orçamento Enviado", "Evento Confirmado", "Concluído", "Perdido"];
+    $("tiles-funil").innerHTML = ordem.filter(function (k) { return st[k]; }).map(function (k) {
+      var x = st[k];
+      var tone = k === "Concluído" ? "in" : (k === "Perdido" ? "out" : "");
+      return tile(k, String(x.n), brl(x.v) + " · " + (x.n ? brl(x.v / x.n) : "—") + " médio", tone);
+    }).join("");
+
+    var conv = taxaConversao();
+    $("funil-conv").textContent = "conversão " + Math.round(conv * 100) + "%";
+
+    var sf = $("filtro-status").value;
+    var lista = S.eventos.filter(function (e) { return !sf || e.status === sf; })
+      .sort(function (a, b) { return (b.data || "") < (a.data || "") ? -1 : 1; });
+
+    var linhas = lista.map(function (e) {
+      var recebido = receitaDoEvento(e);
+      var pp = e.pessoas ? (e.orcado || 0) / e.pessoas : NaN;
+      var dif = (e.orcado || 0) - recebido;
+      var sit = "";
+      if (e.status === "Concluído") {
+        if (recebido <= 0) sit = '<span class="pill crit">sem recebimento</span>';
+        else if (Math.abs(dif) < 1) sit = '<span class="pill ok">conciliado</span>';
+        else if (dif > 0) sit = '<span class="pill warn">falta ' + brl(dif) + "</span>";
+        else sit = '<span class="pill auto">recebeu a mais</span>';
+      }
+      return "<tr><td class='dt'>" + (e.data ? dbr(e.data) : "—") + "</td>" +
+        "<td class='txt'>" + esc(e.nome) + "</td>" +
+        "<td><span class='pill'>" + esc(e.status || "—") + "</span></td>" +
+        "<td class='num'>" + (e.pessoas || "—") + "</td>" +
+        "<td class='num'>" + (e.orcado ? brl(e.orcado) : "—") + "</td>" +
+        "<td class='num'>" + (isNaN(pp) ? "—" : brl(pp)) + "</td>" +
+        "<td class='num'>" + (recebido ? brl(recebido) : "—") + "</td>" +
+        "<td>" + sit + "</td></tr>";
+    }).join("");
+
+    $("box-eventos").innerHTML = "<table><thead><tr><th>Data</th><th>Evento</th><th>Status</th>" +
+      "<th style='text-align:right'>Pessoas</th><th style='text-align:right'>Orçado</th>" +
+      "<th style='text-align:right'>Por pessoa</th><th style='text-align:right'>Recebido</th>" +
+      "<th>Situação</th></tr></thead><tbody>" + linhas + "</tbody></table>";
+  }
+
+  // Índice recebido-por-evento, recalculado uma vez por pintura em vez de
+  // varrer todos os lançamentos para cada evento.
+  var idxReceita = {};
+
+  function indexarReceita() {
+    idxReceita = {};
+    todosLanc().forEach(function (l) {
+      if (!l.evento) return;
+      idxReceita[l.evento] = (idxReceita[l.evento] || 0) + l.valor;
+    });
+  }
+
+  function receitaDoEvento(e) { return idxReceita[e.id] || 0; }
+
+  // Palavras que aparecem em nome de evento mas não identificam o cliente.
+  var GENERICOS = {
+    EVENTO:1, EVENTOS:1, ANIVERSARIO:1, FESTA:1, CONFRATERNIZACAO:1, ENCONTRO:1,
+    VIZINHOS:1, ANOS:1, IDOSOS:1, CLUB:1, CLUBE:1, CASAMENTO:1, FORMATURA:1
+  };
+
+  function tokensDoNome(nome) {
+    return normalizar(nome).split(" ").filter(function (t) {
+      return t.length >= 4 && !GENERICOS[t];
+    });
+  }
+
+  // Liga cada recebimento ao evento cujo cliente aparece na descrição do PIX.
+  // O nome aponta os candidatos; o valor é quem confirma — sobrenome comum
+  // (Lima, Costa, Silva) casa com meio mundo, então nome sozinho não basta.
+  // Cada recebimento fica com o evento de maior pontuação, nunca com o primeiro
+  // que casar, senão duas clientes de mesmo primeiro nome disputam o pagamento.
+  function pontuar(l, e) {
+    if (!e.orcado) return 0;
+    var toks = tokensDoNome(e.nome || "");
+    if (!toks.length) return 0;
+
+    var dias = 0;
+    if (e.data) {
+      dias = Math.abs((new Date(l.data) - new Date(e.data)) / 86400000);
+      if (dias > 120) return 0;
+    }
+    var hits = 0;
+    toks.forEach(function (t) { if (l.limpa.indexOf(t) > -1) hits++; });
+    if (!hits) return 0;
+
+    // Nome e sobrenome juntos na mesma linha já identificam a pessoa, e o
+    // pagamento pode ter sido partido de qualquer jeito. Só o primeiro nome
+    // (ou só o sobrenome, que costuma ser Silva, Lima, Costa) não identifica
+    // ninguém: aí o valor precisa bater com o orçado, a metade ou um terço.
+    var completo = toks.length >= 2 && hits >= 2;
+    var r = l.valor / e.orcado;
+    var valor = Math.abs(r - 1) < 0.06 ? 3
+              : Math.abs(r - 0.5) < 0.08 ? 2
+              : Math.abs(r - (1 / 3)) < 0.06 ? 1 : 0;
+
+    if (!completo) {
+      if (toks.length >= 2) return 0;
+      if (!valor) return 0;
+    }
+    return hits * 2 + valor + (e.data ? Math.max(0, 2 - dias / 60) : 0);
+  }
+
+  function conciliar() {
+    var todos = todosLanc();
+    todos.forEach(function (l) {
+      if (l.vincAuto) { delete l.evento; delete l.vincAuto; }
+    });
+
+    todos.forEach(function (l) {
+      if (l.valor <= 0 || l.evento) return;
+      var melhor = null, alto = 0;
+      S.eventos.forEach(function (e) {
+        var p = pontuar(l, e);
+        if (p > alto) { alto = p; melhor = e; }
+      });
+      if (melhor && alto >= 4) { l.evento = melhor.id; l.vincAuto = true; }
+    });
+  }
+
+  /* ===================== render: divergências ===================== */
+
+  function renderDivergencias() {
+    var d = [];
+    var todos = todosLanc();
+
+    var pend = todos.filter(function (l) { return l.cat === PENDENTE; });
+    if (pend.length) {
+      d.push({ t: "warn", h: pend.length + " lançamentos sem categoria",
+        b: "Somam " + brl2(pend.reduce(function (s, l) { return s + Math.abs(l.valor); }, 0)) +
+           ". Enquanto não forem classificados, ficam de fora do resultado." });
+    }
+
+    if (!isNaN(S.saldo)) {
+      var soma = todos.reduce(function (s, l) { return s + l.valor; }, 0);
+      if (Math.abs(soma - S.saldo) > 0.05) {
+        d.push({ t: "crit", h: "O saldo não fecha",
+          b: "O banco declara " + brl2(S.saldo) + " e a soma dos lançamentos dá " + brl2(soma) +
+             ". A diferença de " + brl2(Math.abs(soma - S.saldo)) + " indica que falta importar algum período." });
+      }
+    }
+
+    // eventos concluídos sem recebimento correspondente
+    var semRec = S.eventos.filter(function (e) {
+      return e.status === "Concluído" && e.orcado > 0 && receitaDoEvento(e) <= 0;
+    });
+    if (semRec.length) {
+      d.push({ t: "warn", h: semRec.length + " eventos concluídos sem recebimento vinculado",
+        b: semRec.slice(0, 6).map(function (e) { return e.nome + " (" + brl(e.orcado) + ")"; }).join(", ") +
+           (semRec.length > 6 ? " e outros" : "") + ". Vincule o recebimento ou confirme se foi pago fora da conta." });
+    }
+
+    // receita sem evento
+    var ano = anoCorrente();
+    var recebido = 0;
+    todos.forEach(function (l) { if ((TIPO[l.cat] || "") === "receita" && l.data.slice(0, 4) === ano) recebido += l.valor; });
+    var concluido = 0;
+    S.eventos.forEach(function (e) { if (e.status === "Concluído" && (!e.data || e.data.slice(0, 4) === ano)) concluido += (e.orcado || 0); });
+    if (recebido - concluido > 500) {
+      d.push({ t: "warn", h: "Receita maior que a soma dos eventos cadastrados",
+        b: "Entraram " + brl(recebido) + " em " + ano + ", mas os eventos concluídos somam " + brl(concluido) +
+           ". A diferença de " + brl(recebido - concluido) + " pode ser evento não cadastrado no CRM." });
+    }
+
+    // pessoas fora da curva
+    var comP = S.eventos.filter(function (e) { return e.pessoas > 0; });
+    if (comP.length > 3) {
+      var med = comP.map(function (e) { return e.pessoas; }).sort(function (a, b) { return a - b; })[Math.floor(comP.length / 2)];
+      comP.forEach(function (e) {
+        if (e.pessoas > med * 8) {
+          d.push({ t: "warn", h: "Número de convidados fora da curva: " + e.nome,
+            b: e.pessoas + " pessoas, quando a mediana dos seus eventos é " + med +
+               ". Parece erro de digitação, e um valor assim distorce o custo por convidado." });
+        }
+      });
+    }
+
+    // valores muito acima da média da categoria
+    var porCat = {};
+    todos.forEach(function (l) {
+      if (l.valor >= 0 || l.cat === PENDENTE) return;
+      (porCat[l.cat] = porCat[l.cat] || []).push(Math.abs(l.valor));
+    });
+    Object.keys(porCat).forEach(function (c) {
+      var vs = porCat[c].slice().sort(function (a, b) { return a - b; });
+      if (vs.length < 5) return;
+      var mediana = vs[Math.floor(vs.length / 2)];
+      todos.forEach(function (l) {
+        if (l.cat === c && l.valor < 0 && Math.abs(l.valor) > mediana * 5) {
+          d.push({ t: "warn", h: "Valor muito acima do normal em " + c,
+            b: dbr(l.data) + " · " + l.desc + " · " + brl2(l.valor) +
+               ". A mediana desta categoria é " + brl(mediana) + "." });
+        }
+      });
+    });
+
+    // pagamentos possivelmente duplicados
+    var vistos = {};
+    todos.forEach(function (l) {
+      if (l.valor >= 0) return;
+      var k = l.limpa + "|" + l.valor.toFixed(2);
+      if (vistos[k]) {
+        var dias = Math.abs((new Date(l.data) - new Date(vistos[k].data)) / 86400000);
+        if (dias <= 7) {
+          d.push({ t: "warn", h: "Possível pagamento em duplicidade",
+            b: l.limpa + " · " + brl2(Math.abs(l.valor)) + " em " + dbr(vistos[k].data) + " e " + dbr(l.data) + "." });
+        }
+      }
+      vistos[k] = l;
+    });
+
+    $("badge-div").textContent = String(d.length);
+    $("badge-div").hidden = d.length === 0;
+
+    if (!d.length) {
+      $("lista-div").innerHTML = '<div class="empty">Nada pendente de validação. Tudo fecha.</div>';
+      return;
+    }
+    $("lista-div").innerHTML = d.slice(0, 40).map(function (x) {
+      return '<div class="card" data-tone="' + x.t + '"><div class="card-i">!</div><div class="card-t">' +
+        '<div class="card-h">' + esc(x.h) + '</div><div class="card-b">' + esc(x.b) + '</div></div></div>';
+    }).join("");
+  }
+
+  /* ===================== pintar tudo ===================== */
+
+  function pintar() {
+    conciliar();
+    indexarReceita();
+    atualizarFiltroMes();
+    renderTeto();
+    renderRetirada();
+    renderDre();
+    renderTopSaidas();
+    renderLanc();
+    renderEventos();
+    renderDivergencias();
+  }
+
+  function atualizarFiltroMes() {
+    var meses = Object.keys(S.lanc).sort().reverse();
+    var atualP = $("sel-periodo").value, atualF = $("filtro-mes").value;
+    $("sel-periodo").innerHTML = '<option value="ano">Ano todo</option>' +
+      meses.map(function (m) { return '<option value="' + m + '">' + rotuloMes(m) + "</option>"; }).join("");
+    $("filtro-mes").innerHTML = '<option value="">Todos os meses</option>' +
+      meses.map(function (m) { return '<option value="' + m + '">' + rotuloMes(m) + "</option>"; }).join("");
+    if (atualP) $("sel-periodo").value = atualP;
+    if (atualF) $("filtro-mes").value = atualF;
+
+    var sts = {};
+    S.eventos.forEach(function (e) { if (e.status) sts[e.status] = 1; });
+    var atualS = $("filtro-status").value;
+    $("filtro-status").innerHTML = '<option value="">Todos os status</option>' +
+      Object.keys(sts).map(function (s) { return '<option value="' + esc(s) + '">' + esc(s) + "</option>"; }).join("");
+    if (atualS) $("filtro-status").value = atualS;
+  }
+
+  var MES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
+  function rotuloMes(m) { var p = m.split("-"); return MES[Number(p[1]) - 1] + "/" + p[0].slice(2); }
+
+  /* ===================== importação ===================== */
+
+  function importar(arquivo) {
+    var fr = new FileReader();
+    fr.onload = function (e) {
+      var txt = decodificar(e.target.result);
+      var ext = lerOfx(txt);
+      if (!ext) {
+        $("import-res").innerHTML = '<div class="card" data-tone="crit"><div class="card-i">!</div>' +
+          '<div class="card-t"><div class="card-h">Não consegui ler este arquivo</div>' +
+          '<div class="card-b">Exporte o extrato no formato OFX pelo aplicativo do banco e tente de novo.</div></div></div>';
+        return;
+      }
+
+      var jaTem = {};
+      Object.keys(S.lanc).forEach(function (m) { S.lanc[m].forEach(function (l) { jaTem[l.id] = 1; }); });
+
+      var novos = 0, repetidos = 0, mexidos = {};
+      ext.lancamentos.forEach(function (l) {
+        if (jaTem[l.id]) { repetidos++; return; }
+        jaTem[l.id] = 1;
+        var limpa = normalizar(l.desc);
+        var c = classificar(limpa, l.valor);
+        var mes = chaveMes(l.data);
+        if (!S.lanc[mes]) S.lanc[mes] = [];
+        S.lanc[mes].push({ id: l.id, data: l.data, valor: l.valor, desc: l.desc,
+                           limpa: limpa, cat: c.cat, auto: c.auto });
+        mexidos[mes] = 1; novos++;
+      });
+
+      if (!isNaN(ext.saldo)) { S.saldo = ext.saldo; S.saldoEm = ext.saldoEm; }
+
+      Object.keys(mexidos).forEach(function (m) {
+        S.lanc[m].sort(function (a, b) { return a.data < b.data ? 1 : -1; });
+        salvarMes(m);
+      });
+      salvarConfig();
+
+      var classificados = 0, pendentes = 0;
+      Object.keys(S.lanc).forEach(function (m) {
+        S.lanc[m].forEach(function (l) { if (l.cat === PENDENTE) pendentes++; else classificados++; });
+      });
+
+      $("import-res").innerHTML =
+        card("ok", novos + " lançamentos novos importados",
+             repetidos ? repetidos + " já existiam e foram ignorados — nada duplicou." : "Nenhuma repetição encontrada.") +
+        (isNaN(ext.saldo) ? "" :
+          card("ok", "Saldo do banco: " + brl2(ext.saldo),
+               "Confira na aba Divergências se a soma dos lançamentos bate com esse valor.")) +
+        card(pendentes ? "warn" : "ok",
+             classificados + " já classificados, " + pendentes + " aguardando você",
+             pendentes ? "Vá em Lançamentos e filtre por “Só os não classificados”. Cada correção sua vira regra." :
+                         "Tudo reconhecido pelas regras aprendidas.");
+
+      S.limite = 60;
+      pintar();
+    };
+    fr.readAsArrayBuffer(arquivo);
+  }
+
+  function card(t, h, b) {
+    return '<div class="card" data-tone="' + t + '"><div class="card-i">' + (t === "ok" ? "✓" : "!") +
+      '</div><div class="card-t"><div class="card-h">' + esc(h) + '</div>' +
+      '<div class="card-b">' + esc(b) + "</div></div></div>";
+  }
+
+  /* ===================== eventos de tela ===================== */
+
+  Array.prototype.forEach.call(document.querySelectorAll("nav button"), function (b) {
+    b.addEventListener("click", function () {
+      var alvo = b.getAttribute("data-aba");
+      Array.prototype.forEach.call(document.querySelectorAll("nav button"), function (o) {
+        o.setAttribute("aria-selected", String(o === b));
+      });
+      ["painel", "lancamentos", "eventos", "divergencias"].forEach(function (a) {
+        $("aba-" + a).hidden = (a !== alvo);
+      });
+      S.aba = alvo;
+    });
+  });
+
+  $("btn-arq").addEventListener("click", function () { $("arq").click(); });
+  $("arq").addEventListener("change", function (e) {
+    if (e.target.files && e.target.files[0]) importar(e.target.files[0]);
+  });
+  ["dragenter", "dragover"].forEach(function (ev) {
+    $("drop").addEventListener(ev, function (e) { e.preventDefault(); $("drop").classList.add("over"); });
+  });
+  ["dragleave", "drop"].forEach(function (ev) {
+    $("drop").addEventListener(ev, function (e) { e.preventDefault(); $("drop").classList.remove("over"); });
+  });
+  $("drop").addEventListener("drop", function (e) {
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) importar(e.dataTransfer.files[0]);
+  });
+
+  $("sel-periodo").addEventListener("change", function () { renderDre(); renderTopSaidas(); });
+  $("filtro-cat").addEventListener("change", function () { S.limite = 60; renderLanc(); });
+  $("filtro-mes").addEventListener("change", function () { S.limite = 60; renderLanc(); });
+  $("filtro-status").addEventListener("change", renderEventos);
+  $("btn-mais").addEventListener("click", function () { S.limite += 120; renderLanc(); });
+  $("sel-socio").addEventListener("change", function () {
+    S.eu = $("sel-socio").value;
+    try { localStorage.setItem("zicco_eu", S.eu); } catch (e) {}
+  });
+
+  /* ===================== início ===================== */
+
+  pintar();
+
+  if (window.claude && typeof window.claude.use === "function") {
+    window.claude.use("db").then(function (db) {
+      if (!db) {
+        aviso("warn", "Não consegui abrir os dados compartilhados nesta sessão. " +
+          "Recarregue a página; se continuar, o aplicativo precisa ser aberto pelo link do artifact.");
+        return;
+      }
+      S.db = db;
+      return carregar().then(function () {
+        reclassificarTudo();
+        var nomes = S.config.socios || [];
+        $("sel-socio").innerHTML = '<option value="">—</option>' +
+          nomes.map(function (n) { return '<option value="' + esc(n) + '">' + esc(n) + "</option>"; }).join("");
+        try {
+          var salvo = localStorage.getItem("zicco_eu");
+          if (salvo && nomes.indexOf(salvo) > -1) { $("sel-socio").value = salvo; S.eu = salvo; }
+        } catch (e) {}
+        pintar();
+      });
+    }).catch(function () {
+      aviso("warn", "Houve um problema ao carregar os dados. Recarregue a página.");
+    });
+  } else {
+    aviso("warn", "Abra pelo link do artifact no claude.ai para que os dados sejam compartilhados com seu sócio.");
+  }
+})();
+</script>

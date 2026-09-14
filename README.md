@@ -71,6 +71,35 @@ Acompanhado do extrato de retiradas por sócio, no mês e no ano.
 - `leitor-extrato.html` — leitor de OFX/CSV que roda inteiramente no navegador.
   Deduplicação por FITID, conferência de saldo, normalização de descrição,
   detecção de contrapartes bilaterais e medidor do teto MEI.
+- `app/zicco.html` — o aplicativo. Painel com teto MEI e retiradas, importação com
+  classificação automática, DRE, rentabilidade por evento e fila de divergências.
+  Os dados ficam no banco compartilhado do Artifact, visível para os dois sócios.
+
+## Conciliação recebimento ↔ evento
+
+O nome do cliente aponta os candidatos; o valor confirma. Medido contra os dados reais:
+
+- **Nome e sobrenome na mesma linha** identificam a pessoa — o pagamento pode ter sido
+  partido de qualquer forma, então o valor não é exigido.
+- **Só o primeiro nome, ou só o sobrenome**, não identifica ninguém (Silva, Lima e Costa
+  casam com meio mundo): aí o valor precisa bater com o orçado, a metade ou um terço.
+- Cada recebimento fica com o evento de **maior pontuação**, nunca com o primeiro que
+  casar — sem isso, duas clientes de mesmo primeiro nome disputam o mesmo pagamento.
+
+Esse desenho saiu de três rodadas contra o extrato real: os critérios frouxos ligavam
+pagamentos de terceiros a "Ingrid Lima" pelo sobrenome, e exigir valor exato sempre fazia
+perder parcelamentos irregulares legítimos.
+
+## Números de referência (jan a set/2026)
+
+Servem para detectar regressão em mudanças futuras:
+
+| Medida | Valor |
+|---|---|
+| Lançamentos lidos do OFX | 535 de 535, nenhum sem FITID, nenhum duplicado |
+| Classificação automática na 1ª importação | 72% |
+| Recebimentos conciliados a evento | 17, R$ 18.619 |
+| Conversão do funil (concluídos ÷ decididos) | 76% |
 
 ## Aprendido com o extrato real
 
