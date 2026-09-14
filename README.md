@@ -71,9 +71,28 @@ Acompanhado do extrato de retiradas por sócio, no mês e no ano.
 - `leitor-extrato.html` — leitor de OFX/CSV que roda inteiramente no navegador.
   Deduplicação por FITID, conferência de saldo, normalização de descrição,
   detecção de contrapartes bilaterais e medidor do teto MEI.
-- `app/zicco.html` — o aplicativo. Painel com teto MEI e retiradas, importação com
-  classificação automática, DRE, rentabilidade por evento e fila de divergências.
-  Os dados ficam no banco compartilhado do Artifact, visível para os dois sócios.
+- `app/zicco.html` — o aplicativo. Cinco abas: painel, lançamentos, eventos,
+  divergências e ajustes. Os dados ficam no banco compartilhado do Artifact,
+  visível para os dois sócios.
+
+## Decisões de interface
+
+| Escolha | Motivo |
+|---|---|
+| **Tema claro fixo**, sem bloco de tema escuro | Pedido dos sócios. Toda cor sai do `:root`; nada depende do tema do navegador |
+| O destaque do painel é **total movimentado**, não o teto | O teto é a mesma soma com outro nome; a comparação com o limite é opcional e se liga em Ajustes |
+| Categoria removida é **desativada, nunca apagada** | Some das listas novas, mas os lançamentos antigos continuam classificados nela — o histórico não muda |
+| Toda ação que grava confirma com um aviso flutuante | Sem confirmação, não dá para saber se a gravação chegou ao banco compartilhado |
+| Apagar lançamentos exige **dois cliques**, o segundo com rótulo diferente | Ação irreversível não pode depender de um clique só |
+| Divergência resolvida guarda uma **chave derivada do conteúdo** | Se o mesmo problema voltar a acontecer com dados novos, a chave muda e o aviso reaparece sozinho |
+
+## Sincronização com o Notion
+
+Os eventos **não** chegam sozinhos: a base é consultada quando alguém clica em
+atualizar, e o resultado fica gravado no banco do artifact. Isso é deliberado —
+a chamada usa o conector do Notion de **quem está olhando a página**, e só um dos
+sócios tem esse conector. Gravando o resultado, o outro enxerga os eventos sem
+precisar de Notion nenhum.
 
 ## Conciliação recebimento ↔ evento
 

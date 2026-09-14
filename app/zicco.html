@@ -4,61 +4,37 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
 
 <style>
+  /* Tema claro fixo, a pedido dos sócios. Toda cor sai daqui e nada depende
+     do tema do navegador — por isso não existe bloco de tema escuro. */
   :root {
     --ground:#F1F4F5; --surface:#FFFFFF; --sunk:#E9EEEF;
-    --ink:#121A1C; --soft:#56656A; --faint:#84969B;
+    --ink:#121A1C; --soft:#56656A; --faint:#7D9096;
     --line:#DBE3E5; --line2:#C3CFD2;
     --accent:#0F4C5C; --accent-ink:#FFFFFF; --accent-wash:#E4EFF2;
     --ember:#C9632A; --ember-wash:#FAEDE4;
     --ok:#16704A; --ok-wash:#E1F0E8;
-    --warn:#96650A; --warn-wash:#F8EFDC;
+    --warn:#8A5D08; --warn-wash:#F8EFDC;
     --crit:#A82A22; --crit-wash:#F8E6E4;
     --r:10px;
     --shadow:0 1px 2px rgba(18,26,28,.06), 0 8px 24px -14px rgba(18,26,28,.2);
-    color-scheme: light dark;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --ground:#0B1214; --surface:#121D20; --sunk:#0F1A1D;
-      --ink:#E7EDEE; --soft:#93A3A7; --faint:#6C7E83;
-      --line:#212F33; --line2:#314348;
-      --accent:#59A9BE; --accent-ink:#08171B; --accent-wash:#13292F;
-      --ember:#E08A50; --ember-wash:#2A1D14;
-      --ok:#5EC08D; --ok-wash:#12271E;
-      --warn:#D9A441; --warn-wash:#2A2114;
-      --crit:#E8786C; --crit-wash:#2B1715;
-      --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.6);
-    }
-  }
-  :root[data-theme="dark"] {
-    --ground:#0B1214; --surface:#121D20; --sunk:#0F1A1D;
-    --ink:#E7EDEE; --soft:#93A3A7; --faint:#6C7E83;
-    --line:#212F33; --line2:#314348;
-    --accent:#59A9BE; --accent-ink:#08171B; --accent-wash:#13292F;
-    --ember:#E08A50; --ember-wash:#2A1D14;
-    --ok:#5EC08D; --ok-wash:#12271E;
-    --warn:#D9A441; --warn-wash:#2A2114;
-    --crit:#E8786C; --crit-wash:#2B1715;
-    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -14px rgba(0,0,0,.6);
+    color-scheme: light;
   }
 
   * { box-sizing: border-box; }
 
   body {
-    background: var(--ground); color: var(--ink);
+    background:var(--ground); color:var(--ink);
     font-family:"IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased;
   }
 
-  .wrap { max-width:1000px; margin:0 auto; padding-inline:18px; padding-block:26px 70px; }
+  .wrap { max-width:1020px; margin:0 auto; padding-inline:18px; padding-block:24px 90px; }
 
-  /* topo */
-  .top { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-bottom:18px; }
-  .mark {
-    width:32px; height:32px; flex:none; border-radius:8px; background:var(--accent);
-    color:var(--accent-ink); display:grid; place-items:center;
-    font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:16px;
-  }
+  /* ---------- topo ---------- */
+  .top { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-bottom:16px; }
+  .mark { width:32px; height:32px; flex:none; border-radius:8px; background:var(--accent);
+          color:var(--accent-ink); display:grid; place-items:center;
+          font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:16px; }
   .name { font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:18px; letter-spacing:-.015em; }
   .role { font-family:"IBM Plex Mono",monospace; font-size:10px; text-transform:uppercase;
           letter-spacing:.1em; color:var(--faint); margin-top:-3px; }
@@ -70,65 +46,78 @@
   }
   select:focus-visible, input:focus-visible { outline:2px solid var(--accent); outline-offset:1px; }
 
-  /* abas */
-  nav { display:flex; gap:3px; border-bottom:1px solid var(--line); margin-bottom:22px; overflow-x:auto; }
-  nav button {
-    font:inherit; font-size:14px; font-weight:500; background:none; border:none;
+  /* ---------- abas ---------- */
+  nav { display:flex; gap:2px; border-bottom:1px solid var(--line); margin-bottom:22px; overflow-x:auto; }
+  nav button { font:inherit; font-size:14px; font-weight:500; background:none; border:none;
     color:var(--soft); padding:9px 13px; cursor:pointer; white-space:nowrap;
-    border-bottom:2px solid transparent; margin-bottom:-1px; border-radius:0;
-  }
+    border-bottom:2px solid transparent; margin-bottom:-1px; border-radius:0; }
   nav button[aria-selected="true"] { color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
   nav button:focus-visible { outline:2px solid var(--accent); outline-offset:-2px; }
 
-  button {
-    font:inherit; font-size:14px; font-weight:500; border-radius:7px; padding:8px 14px;
+  button { font:inherit; font-size:14px; font-weight:500; border-radius:7px; padding:8px 14px;
     cursor:pointer; border:1px solid transparent; background:var(--accent); color:var(--accent-ink);
-    transition:opacity .14s ease;
-  }
+    transition:opacity .14s ease; }
   button:hover:not(:disabled){ opacity:.87; }
-  button:disabled { opacity:.45; cursor:not-allowed; }
+  button:disabled { opacity:.42; cursor:not-allowed; }
   button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
   button.ghost { background:transparent; color:var(--soft); border-color:var(--line2); }
   button.mini { font-size:12.5px; padding:5px 10px; }
+  button.danger { background:var(--crit); }
 
   h2 { font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:17px;
-       letter-spacing:-.015em; margin:0; }
-  h3 { font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:15px;
-       letter-spacing:-.01em; margin:0; }
+       letter-spacing:-.015em; margin:0; display:flex; align-items:center; gap:6px; }
 
-  .sec { display:flex; flex-direction:column; gap:13px; margin-bottom:30px; }
+  .sec { display:flex; flex-direction:column; gap:12px; margin-bottom:28px; }
   .sec-head { display:flex; flex-wrap:wrap; align-items:baseline; justify-content:space-between; gap:9px; }
   .muted { font-size:12.5px; color:var(--faint); font-family:"IBM Plex Mono",monospace; }
 
-  /* medidor teto */
-  .gauge { background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
-           padding:17px 19px; display:flex; flex-direction:column; gap:11px; box-shadow:var(--shadow); }
-  .gauge-top { display:flex; flex-wrap:wrap; align-items:baseline; gap:9px; }
-  .gauge-num { font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:27px;
-               font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
-  .gauge-of { font-size:13.5px; color:var(--soft); }
-  .gauge-pct { margin-left:auto; font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:15px; }
+  /* ---------- ajuda "i" ---------- */
+  .info { position:relative; display:inline-flex; flex:none; }
+  .info > button {
+    width:16px; height:16px; padding:0; border-radius:50%; background:var(--sunk);
+    color:var(--soft); border:1px solid var(--line2); font-size:10.5px; font-weight:700;
+    line-height:1; display:grid; place-items:center; font-family:"IBM Plex Mono",monospace;
+  }
+  .info > button:hover { background:var(--accent-wash); color:var(--accent); opacity:1; }
+  .info-bolha {
+    position:absolute; top:calc(100% + 7px); left:-8px; z-index:40; width:min(280px, 74vw);
+    background:var(--ink); color:#fff; border-radius:8px; padding:9px 11px;
+    font-size:12.5px; line-height:1.5; font-weight:400; font-family:"IBM Plex Sans",sans-serif;
+    box-shadow:0 6px 22px -6px rgba(0,0,0,.4); text-align:left; letter-spacing:0; text-transform:none;
+  }
+  .info-bolha::before { content:""; position:absolute; top:-5px; left:12px; width:10px; height:10px;
+    background:var(--ink); transform:rotate(45deg); border-radius:2px; }
+
+  /* ---------- destaque ---------- */
+  .hero { background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+          padding:17px 19px; display:flex; flex-direction:column; gap:10px; box-shadow:var(--shadow); }
+  .hero-top { display:flex; flex-wrap:wrap; align-items:baseline; gap:9px; }
+  .hero-num { font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:27px;
+              font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
+  .hero-of { font-size:13.5px; color:var(--soft); }
+  .hero-pct { margin-left:auto; font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:15px; }
   .bar { height:9px; border-radius:99px; background:var(--sunk); overflow:hidden; position:relative; }
   .bar span { display:block; height:100%; border-radius:99px; transition:width .4s ease; }
-  .bar .proj { position:absolute; top:0; height:100%; border-radius:99px; opacity:.32; }
-  .gauge-note { font-size:13px; color:var(--soft); }
-  .gauge[data-tone="ok"]   .gauge-num, .gauge[data-tone="ok"]   .gauge-pct { color:var(--ok); }
-  .gauge[data-tone="warn"] .gauge-num, .gauge[data-tone="warn"] .gauge-pct { color:var(--warn); }
-  .gauge[data-tone="crit"] .gauge-num, .gauge[data-tone="crit"] .gauge-pct { color:var(--crit); }
+  .bar .proj { position:absolute; top:0; height:100%; border-radius:99px; opacity:.3; background:var(--ember); }
+  .hero-note { font-size:13px; color:var(--soft); }
+  .hero[data-tone="ok"]     .hero-num, .hero[data-tone="ok"]   .hero-pct { color:var(--ok); }
+  .hero[data-tone="warn"]   .hero-num, .hero[data-tone="warn"] .hero-pct { color:var(--warn); }
+  .hero[data-tone="crit"]   .hero-num, .hero[data-tone="crit"] .hero-pct { color:var(--crit); }
+  .hero[data-tone="neutro"] .hero-num { color:var(--accent); }
 
-  /* tiles */
-  .tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(152px,1fr)); gap:10px; }
+  /* ---------- tiles ---------- */
+  .tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; }
   .tile { background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
           padding:12px 14px; display:flex; flex-direction:column; gap:2px; }
   .tile-l { font-family:"IBM Plex Mono",monospace; font-size:9.5px; text-transform:uppercase;
-            letter-spacing:.09em; color:var(--faint); }
+            letter-spacing:.09em; color:var(--faint); display:flex; align-items:center; gap:4px; }
   .tile-v { font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:18px;
             font-variant-numeric:tabular-nums; letter-spacing:-.01em; }
   .tile-s { font-size:11.5px; color:var(--faint); }
   .tile[data-tone="in"]  .tile-v { color:var(--ok); }
   .tile[data-tone="out"] .tile-v { color:var(--crit); }
 
-  /* DRE */
+  /* ---------- DRE ---------- */
   .dre { background:var(--surface); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
   .dre-row { display:flex; align-items:baseline; gap:10px; padding:8px 16px; border-bottom:1px solid var(--line); }
   .dre-row:last-child { border-bottom:none; }
@@ -136,38 +125,52 @@
   .dre-row .val { font-family:"IBM Plex Mono",monospace; font-size:13.5px;
                   font-variant-numeric:tabular-nums; white-space:nowrap; }
   .dre-row .pc { font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--faint);
-                 width:52px; text-align:right; flex:none; font-variant-numeric:tabular-nums; }
+                 width:50px; text-align:right; flex:none; font-variant-numeric:tabular-nums; }
   .dre-row.sub .lbl { padding-left:15px; font-size:13.5px; color:var(--soft); }
   .dre-row.sub .val { color:var(--soft); }
-  .dre-row.total { background:var(--sunk); font-weight:600; }
+  .dre-row.total { background:var(--sunk); }
   .dre-row.total .lbl, .dre-row.total .val { font-weight:600; }
   .dre-row.key { background:var(--accent-wash); }
   .dre-row.key .lbl, .dre-row.key .val { font-weight:700; color:var(--accent); }
   .neg { color:var(--crit); } .pos { color:var(--ok); }
 
-  /* listas / tabelas */
+  /* ---------- tabelas ---------- */
   .scroll { overflow-x:auto; border:1px solid var(--line); border-radius:var(--r); background:var(--surface); }
-  table { border-collapse:collapse; width:100%; min-width:560px; }
-  th,td { text-align:left; padding:8px 12px; border-bottom:1px solid var(--line); vertical-align:middle; }
+  table { border-collapse:collapse; width:100%; min-width:600px; }
+  th,td { text-align:left; padding:8px 11px; border-bottom:1px solid var(--line); vertical-align:middle; }
   tr:last-child td { border-bottom:none; }
   th { font-family:"IBM Plex Mono",monospace; font-size:9.5px; text-transform:uppercase;
        letter-spacing:.08em; color:var(--faint); font-weight:500; background:var(--sunk); }
-  td.num { font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums;
-           text-align:right; white-space:nowrap; font-size:13px; }
+  tr.sel td { background:var(--accent-wash); }
+  td.num, th.num { font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums;
+                   text-align:right; white-space:nowrap; font-size:13px; }
   td.dt { font-family:"IBM Plex Mono",monospace; font-size:12.5px; white-space:nowrap; }
-  td.txt { font-size:13.5px; overflow-wrap:anywhere; min-width:170px; }
+  td.txt { font-size:13.5px; overflow-wrap:anywhere; min-width:160px; }
+  td.chk, th.chk { width:34px; padding-right:0; }
+  input[type="checkbox"] { width:15px; height:15px; accent-color:var(--accent); cursor:pointer; margin:0; }
   .sub2 { font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--faint); overflow-wrap:anywhere; }
-  td select { font-size:12.5px; padding:4px 7px; max-width:210px; }
+  td select { font-size:12.5px; padding:4px 7px; max-width:200px; }
 
   .pill { font-family:"IBM Plex Mono",monospace; font-size:9.5px; text-transform:uppercase;
           letter-spacing:.06em; padding:2px 7px; border-radius:99px; white-space:nowrap;
-          background:var(--sunk); color:var(--faint); }
+          background:var(--sunk); color:var(--faint); display:inline-block; }
   .pill.ok { background:var(--ok-wash); color:var(--ok); }
   .pill.warn { background:var(--warn-wash); color:var(--warn); }
   .pill.crit { background:var(--crit-wash); color:var(--crit); }
   .pill.auto { background:var(--accent-wash); color:var(--accent); }
 
-  /* cartões de alerta */
+  /* ---------- ações em lote ---------- */
+  .lote {
+    position:sticky; bottom:12px; z-index:30; background:var(--ink); color:#fff;
+    border-radius:var(--r); padding:10px 14px; display:flex; flex-wrap:wrap;
+    align-items:center; gap:9px; box-shadow:0 8px 28px -8px rgba(0,0,0,.45); margin-top:10px;
+  }
+  .lote .qtd { font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:600; flex:none; }
+  .lote select { background:#1E2A2E; color:#fff; border-color:#33474D; font-size:13px; max-width:190px; }
+  .lote button { font-size:13px; padding:6px 12px; }
+  .lote button.ghost { color:#C3CFD2; border-color:#3A4E54; }
+
+  /* ---------- cartões ---------- */
   .card { background:var(--surface); border:1px solid var(--line); border-left:3px solid var(--line2);
           border-radius:var(--r); padding:12px 15px; display:flex; gap:11px; align-items:flex-start; }
   .card[data-tone="ok"]  { border-left-color:var(--ok); }
@@ -181,23 +184,37 @@
   .card-t { flex:1 1 auto; min-width:0; }
   .card-h { font-weight:600; font-size:14px; }
   .card-b { font-size:13px; color:var(--soft); overflow-wrap:anywhere; }
+  .card-a { flex:none; display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
   .cards { display:flex; flex-direction:column; gap:8px; }
 
-  /* dropzone */
+  /* ---------- dropzone ---------- */
   .drop { border:1.5px dashed var(--line2); border-radius:var(--r); background:var(--surface);
           padding:18px; display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
   .drop.over { border-color:var(--accent); background:var(--accent-wash); }
   input[type="file"] { display:none; }
 
-  /* barras simples */
+  /* ---------- barras ---------- */
   .barlist { display:flex; flex-direction:column; gap:1px; background:var(--line);
              border:1px solid var(--line); border-radius:var(--r); overflow:hidden; }
   .barrow { background:var(--surface); padding:9px 13px; display:flex; align-items:center; gap:11px; }
   .barrow .bn { flex:1 1 auto; min-width:0; font-size:13.5px; overflow-wrap:anywhere; }
   .barrow .bt { font-family:"IBM Plex Mono",monospace; font-size:13px; font-variant-numeric:tabular-nums;
                 flex:none; white-space:nowrap; font-weight:500; }
-  .track { flex:0 0 88px; height:6px; border-radius:99px; background:var(--sunk); overflow:hidden; }
+  .track { flex:0 0 84px; height:6px; border-radius:99px; background:var(--sunk); overflow:hidden; }
   .track span { display:block; height:100%; background:var(--accent); border-radius:99px; }
+
+  /* ---------- ajustes ---------- */
+  .painel { background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:15px 17px;
+            display:flex; flex-direction:column; gap:13px; }
+  .campo { display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
+  .campo label { font-size:13.5px; flex:1 1 190px; min-width:0; display:flex; align-items:center; gap:6px; }
+  .campo input[type="number"] { flex:0 0 150px; }
+  .catrow { display:flex; align-items:center; gap:9px; padding:7px 0; border-bottom:1px solid var(--line); }
+  .catrow:last-child { border-bottom:none; }
+  .catrow .cn { flex:1 1 auto; min-width:0; font-size:13.5px; overflow-wrap:anywhere; }
+  .catrow .cg { font-family:"IBM Plex Mono",monospace; font-size:10px; color:var(--faint);
+                text-transform:uppercase; letter-spacing:.06em; flex:none; }
+  .catrow.off .cn { color:var(--faint); text-decoration:line-through; }
 
   .row { display:flex; flex-wrap:wrap; gap:9px; align-items:center; }
   .note { font-size:13px; color:var(--soft); border-top:1px solid var(--line); padding-top:14px; }
@@ -212,7 +229,20 @@
   .banner.crit { background:var(--crit-wash); }
   .banner .msg { flex:1 1 200px; min-width:0; }
 
-  @media (prefers-reduced-motion: reduce){ *{ transition-duration:.01ms !important; } }
+  /* ---------- confirmações ---------- */
+  #toasts { position:fixed; left:50%; bottom:18px; transform:translateX(-50%); z-index:90;
+            display:flex; flex-direction:column; gap:7px; align-items:center;
+            width:max-content; max-width:calc(100vw - 32px); pointer-events:none; }
+  .toast { background:var(--ink); color:#fff; border-radius:99px; padding:9px 17px; font-size:13.5px;
+           box-shadow:0 8px 26px -8px rgba(0,0,0,.45); display:flex; align-items:center; gap:8px;
+           animation:sobe .2s ease; max-width:100%; }
+  .toast .tic { width:16px; height:16px; border-radius:50%; display:grid; place-items:center;
+                font-size:10px; font-weight:700; flex:none; background:var(--ok); }
+  .toast[data-t="erro"] .tic { background:var(--crit); }
+  .toast[data-t="info"] .tic { background:var(--accent); }
+  @keyframes sobe { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:.01ms !important; transition-duration:.01ms !important; } }
   @media (max-width:520px){ .who { margin-left:0; width:100%; } }
 </style>
 
@@ -226,54 +256,50 @@
     </div>
     <div class="who">
       <label for="sel-socio" class="muted">Sou</label>
-      <select id="sel-socio">
-        <option value="">—</option>
-      </select>
+      <select id="sel-socio"><option value="">—</option></select>
     </div>
   </header>
 
-  <div class="banner warn" id="aviso" hidden>
-    <span class="msg" id="aviso-msg"></span>
-  </div>
+  <div class="banner warn" id="aviso" hidden><span class="msg" id="aviso-msg"></span></div>
 
   <nav role="tablist">
     <button role="tab" aria-selected="true"  data-aba="painel">Painel</button>
     <button role="tab" aria-selected="false" data-aba="lancamentos">Lançamentos</button>
     <button role="tab" aria-selected="false" data-aba="eventos">Eventos</button>
     <button role="tab" aria-selected="false" data-aba="divergencias">Divergências <span class="pill crit" id="badge-div" hidden>0</span></button>
+    <button role="tab" aria-selected="false" data-aba="ajustes">Ajustes</button>
   </nav>
 
   <!-- ============ PAINEL ============ -->
   <section id="aba-painel">
-
     <div class="sec">
       <div class="sec-head">
-        <h2>Teto do MEI</h2>
-        <span class="muted" id="teto-ano">—</span>
+        <h2>Total movimentado <span class="info" data-info="Tudo que entrou na conta no período: eventos, feiras e qualquer outro recebimento. É o número que o contador chama de faturamento bruto."></span></h2>
+        <span class="muted" id="hero-ano">—</span>
       </div>
-      <div class="gauge" id="gauge" data-tone="ok">
-        <div class="gauge-top">
-          <span class="gauge-num" id="teto-val">—</span>
-          <span class="gauge-of" id="teto-de">—</span>
-          <span class="gauge-pct" id="teto-pct">—</span>
+      <div class="hero" id="hero" data-tone="neutro">
+        <div class="hero-top">
+          <span class="hero-num" id="hero-val">—</span>
+          <span class="hero-of" id="hero-de"></span>
+          <span class="hero-pct" id="hero-pct"></span>
         </div>
-        <div class="bar">
+        <div class="bar" id="hero-bar" hidden>
           <span class="proj" id="bar-proj" style="width:0"></span>
           <span id="bar-real" style="width:0"></span>
         </div>
-        <div class="gauge-note" id="teto-nota">—</div>
+        <div class="hero-note" id="hero-nota"></div>
       </div>
     </div>
 
     <div class="sec">
-      <h2>Quanto posso retirar</h2>
+      <h2>Quanto posso retirar <span class="info" data-info="Parte do dinheiro em conta, desconta o custo dos eventos já fechados que ainda vão acontecer, desconta a reserva de segurança definida em Ajustes, e mostra o que sobra."></span></h2>
       <div class="tiles" id="tiles-retirada"></div>
       <div class="scroll" id="box-socios"></div>
     </div>
 
     <div class="sec">
       <div class="sec-head">
-        <h2>Resultado</h2>
+        <h2>Resultado <span class="info" data-info="O DRE: receita, menos impostos, menos os custos que variam a cada evento — o que sobra aí é a margem de contribuição — e por fim menos as despesas fixas. A porcentagem ao lado é sobre a receita."></span></h2>
         <select id="sel-periodo"><option value="ano">Ano todo</option></select>
       </div>
       <div class="dre" id="dre"></div>
@@ -283,18 +309,16 @@
       <h2>Para onde vai o dinheiro</h2>
       <div class="barlist" id="top-saidas"></div>
     </div>
-
   </section>
 
   <!-- ============ LANÇAMENTOS ============ -->
   <section id="aba-lancamentos" hidden>
-
     <div class="sec">
-      <h2>Importar extrato</h2>
+      <h2>Importar extrato <span class="info" data-info="Exporte o extrato em OFX pelo aplicativo do banco. Lançamento já importado nunca entra duas vezes: o banco carimba um código único em cada linha, e o aplicativo guarda esses códigos."></span></h2>
       <div class="drop" id="drop">
         <div style="flex:1 1 220px;min-width:0;">
           <div style="font-weight:600;">Arraste o arquivo OFX do banco</div>
-          <div style="font-size:13px;color:var(--soft);">Lançamento já importado nunca entra duas vezes</div>
+          <div style="font-size:13px;color:var(--soft);">Aceita .ofx e .csv — a leitura acontece no seu aparelho</div>
         </div>
         <button id="btn-arq">Escolher arquivo</button>
         <input type="file" id="arq" accept=".ofx,.OFX,.csv,.CSV,.txt">
@@ -304,14 +328,16 @@
 
     <div class="sec">
       <div class="sec-head">
-        <h2>Lançamentos</h2>
+        <h2>Lançamentos <span class="info" data-info="Marque as caixas à esquerda para classificar vários de uma vez. Toda correção vira regra: o mesmo fornecedor passa a ser reconhecido sozinho daqui em diante."></span></h2>
         <div class="row">
           <select id="filtro-cat">
             <option value="">Todas as situações</option>
             <option value="pendente">Só os não classificados</option>
             <option value="auto">Classificados automaticamente</option>
+            <option value="manual">Classificados por vocês</option>
           </select>
           <select id="filtro-mes"><option value="">Todos os meses</option></select>
+          <input type="text" id="busca" placeholder="Buscar descrição…" style="flex:0 0 160px;">
         </div>
       </div>
       <div class="scroll" id="box-lanc"></div>
@@ -319,24 +345,33 @@
         <button class="ghost mini" id="btn-mais" hidden>Mostrar mais</button>
         <span class="muted" id="lanc-contagem"></span>
       </div>
+      <div class="lote" id="lote" hidden>
+        <span class="qtd" id="lote-qtd">0</span>
+        <select id="lote-cat" aria-label="Categoria para aplicar"></select>
+        <button class="mini" id="lote-aplicar">Aplicar categoria</button>
+        <select id="lote-evento" aria-label="Evento para vincular"><option value="">Vincular a evento…</option></select>
+        <button class="mini" id="lote-vincular">Vincular</button>
+        <button class="ghost mini" id="lote-limpar">Limpar seleção</button>
+      </div>
     </div>
-
   </section>
 
   <!-- ============ EVENTOS ============ -->
   <section id="aba-eventos" hidden>
     <div class="sec">
       <div class="sec-head">
-        <h2>Funil comercial</h2>
+        <h2>Funil comercial <span class="info" data-info="A conversão é quantos eventos decididos vocês fecharam: concluídos divididos por concluídos mais perdidos. Propostas ainda em aberto não entram nessa conta."></span></h2>
         <span class="muted" id="funil-conv">—</span>
       </div>
       <div class="tiles" id="tiles-funil"></div>
     </div>
-
     <div class="sec">
       <div class="sec-head">
-        <h2>Eventos</h2>
-        <select id="filtro-status"><option value="">Todos os status</option></select>
+        <h2>Eventos <span class="info" data-info="“Recebido” é o que o aplicativo conseguiu ligar a este evento pelo nome de quem pagou. Quando não encontrar, vincule você mesmo: em Lançamentos, marque as linhas e use “Vincular a evento”."></span></h2>
+        <div class="row">
+          <select id="filtro-status"><option value="">Todos os status</option></select>
+          <button class="ghost mini" id="btn-sync-ev">Atualizar do Notion</button>
+        </div>
       </div>
       <div class="scroll" id="box-eventos"></div>
     </div>
@@ -346,20 +381,118 @@
   <section id="aba-divergencias" hidden>
     <div class="sec">
       <div class="sec-head">
-        <h2>Precisa da sua validação</h2>
-        <span class="muted">o que não fecha, ou não faz sentido</span>
+        <h2>Precisa da sua validação <span class="info" data-info="O que não fecha ou parece estranho. “Resolver” tira o aviso da lista e guarda que vocês já olharam. Se o problema voltar a aparecer com dados novos, ele reaparece."></span></h2>
+        <label class="muted" style="display:flex;align-items:center;gap:5px;cursor:pointer;">
+          <input type="checkbox" id="ver-resolvidas"> ver já resolvidas
+        </label>
       </div>
       <div class="cards" id="lista-div"></div>
     </div>
   </section>
 
-  <p class="note">
-    <strong>Como ele aprende:</strong> toda vez que você corrige a categoria de um lançamento,
-    o aplicativo memoriza aquele fornecedor e aplica a mesma categoria sozinho da próxima vez.
-    Quanto mais você usa, menos trabalho dá.
-  </p>
+  <!-- ============ AJUSTES ============ -->
+  <section id="aba-ajustes" hidden>
+    <div class="sec">
+      <h2>Sócios e caixa</h2>
+      <div class="painel">
+        <div class="campo">
+          <label for="cfg-socio1">Nome do primeiro sócio</label>
+          <input type="text" id="cfg-socio1" maxlength="40" style="flex:0 0 170px;">
+        </div>
+        <div class="campo">
+          <label for="cfg-socio2">Nome do segundo sócio</label>
+          <input type="text" id="cfg-socio2" maxlength="40" style="flex:0 0 170px;">
+        </div>
+        <div class="campo">
+          <label for="cfg-reserva">Reserva de segurança em R$
+            <span class="info" data-info="Quanto vocês querem sempre manter em conta como colchão. Esse valor é descontado antes de o painel dizer o que está disponível para retirada."></span>
+          </label>
+          <input type="number" id="cfg-reserva" min="0" step="100">
+        </div>
+        <div class="row"><button id="btn-salvar-socios">Salvar</button></div>
+      </div>
+    </div>
 
+    <div class="sec">
+      <h2>Acompanhamento do teto</h2>
+      <div class="painel">
+        <div class="campo">
+          <label for="cfg-mostrar-teto">Comparar o total movimentado com o teto do MEI
+            <span class="info" data-info="Ligado, o painel compara o total movimentado com o limite anual e projeta o fechamento do ano usando os eventos do funil. Desligado, mostra apenas o total movimentado e a média mensal."></span>
+          </label>
+          <input type="checkbox" id="cfg-mostrar-teto" style="flex:none;">
+        </div>
+        <div class="campo">
+          <label for="cfg-teto">Limite anual de faturamento em R$
+            <span class="info" data-info="O limite do MEI muda por lei. Confirme o valor vigente com seu contador e ajuste aqui — o aplicativo nunca assume um número fixo."></span>
+          </label>
+          <input type="number" id="cfg-teto" min="0" step="1000">
+        </div>
+        <div class="row"><button id="btn-salvar-teto">Salvar</button></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head">
+        <h2>Plano de contas <span class="info" data-info="Desligue o que não faz mais parte da operação: a categoria some das listas, mas os lançamentos antigos continuam guardados com ela, então o histórico não muda."></span></h2>
+        <span class="muted" id="cat-contagem"></span>
+      </div>
+      <div class="painel">
+        <div id="lista-cats"></div>
+        <div class="campo" style="border-top:1px solid var(--line);padding-top:12px;">
+          <input type="text" id="nova-cat" placeholder="Nome da nova categoria" style="flex:1 1 170px;">
+          <select id="nova-grupo" aria-label="Grupo da nova categoria"></select>
+          <button class="mini" id="btn-nova-cat">Criar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h2>Eventos do Notion <span class="info" data-info="Os eventos não chegam sozinhos: o Notion é consultado quando você clica em atualizar. O que vier fica guardado aqui, então seu sócio enxerga os eventos mesmo sem ter o Notion conectado na conta dele."></span></h2>
+      <div class="painel">
+        <div class="campo">
+          <label for="cfg-ds">Endereço da base no Notion</label>
+          <input type="text" id="cfg-ds" style="flex:1 1 250px;font-family:'IBM Plex Mono',monospace;font-size:12px;">
+        </div>
+        <div class="row">
+          <button id="btn-sync">Atualizar eventos agora</button>
+          <button class="ghost" id="btn-salvar-ds">Salvar endereço</button>
+        </div>
+        <div class="cards" id="sync-res"></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h2>Regras aprendidas <span class="info" data-info="Tudo que o aplicativo já sabe reconhecer sozinho. Remover uma regra faz os lançamentos dela voltarem a ser classificados do zero."></span></h2>
+      <div class="painel">
+        <span class="muted" id="regras-contagem"></span>
+        <div class="scroll" id="box-regras" style="max-height:290px;overflow-y:auto;"></div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h2>Apagar dados</h2>
+      <div class="painel">
+        <div class="card" data-tone="crit">
+          <div class="card-i">!</div>
+          <div class="card-t">
+            <div class="card-h">Apagar todos os lançamentos</div>
+            <div class="card-b">Remove o extrato importado. Eventos, regras aprendidas e ajustes permanecem. Não dá para desfazer.</div>
+          </div>
+        </div>
+        <div class="row"><button class="danger" id="btn-limpar-lanc">Apagar lançamentos</button></div>
+      </div>
+    </div>
+  </section>
+
+  <p class="note">
+    <strong>Como ele aprende:</strong> toda vez que vocês corrigem a categoria de um lançamento,
+    o aplicativo memoriza aquele fornecedor e passa a aplicar a mesma categoria sozinho.
+    Quanto mais usam, menos trabalho dá.
+  </p>
 </div>
+
+<div id="toasts" aria-live="polite"></div>
 
 <script>
 (function () {
@@ -367,11 +500,32 @@
 
   var $ = function (id) { return document.getElementById(id); };
 
+  /* ===================== confirmações ===================== */
+
+  function toast(msg, tipo) {
+    var t = document.createElement("div");
+    t.className = "toast";
+    t.setAttribute("data-t", tipo || "ok");
+    var ic = document.createElement("span");
+    ic.className = "tic";
+    ic.textContent = tipo === "erro" ? "!" : (tipo === "info" ? "i" : "✓");
+    var tx = document.createElement("span");
+    tx.textContent = msg;
+    t.appendChild(ic); t.appendChild(tx);
+    $("toasts").appendChild(t);
+    setTimeout(function () {
+      t.style.transition = "opacity .25s ease";
+      t.style.opacity = "0";
+      setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, 260);
+    }, tipo === "erro" ? 5200 : 2900);
+  }
+
   /* ===================== plano de contas ===================== */
 
-  var PLANO = [
+  var GRUPOS = ["Receita", "Deduções", "Custos diretos", "Despesas fixas", "Sócios", "Fora do resultado"];
+
+  var PLANO_PADRAO = [
     ["Receita",          "Receita de eventos",                 "receita"],
-    ["Receita",          "Receita de feiras",                  "receita"],
     ["Receita",          "Outras receitas",                    "receita"],
     ["Deduções",         "DAS MEI",                            "deducao"],
     ["Deduções",         "Taxa de maquininha",                 "deducao"],
@@ -381,7 +535,6 @@
     ["Custos diretos",   "Gás",                                "custo"],
     ["Custos diretos",   "Mão de obra de evento",              "custo"],
     ["Custos diretos",   "Combustível e logística",            "custo"],
-    ["Custos diretos",   "Taxa de participação em feira",      "custo"],
     ["Despesas fixas",   "Marketing e vendas",                 "despesa"],
     ["Despesas fixas",   "Tarifas bancárias",                  "despesa"],
     ["Despesas fixas",   "Manutenção de equipamentos",         "despesa"],
@@ -396,8 +549,11 @@
     ["Fora do resultado","A classificar",                      "pendente"]
   ];
 
-  var TIPO = {};
-  PLANO.forEach(function (p) { TIPO[p[1]] = p[2]; });
+  var TIPO_DO_GRUPO = {
+    "Receita": "receita", "Deduções": "deducao", "Custos diretos": "custo",
+    "Despesas fixas": "despesa", "Sócios": "retirada", "Fora do resultado": "transferencia"
+  };
+
   var PENDENTE = "A classificar";
 
   /* ===================== normalização ===================== */
@@ -416,7 +572,7 @@
     return t.replace(/[^A-Z0-9 ]/g, " ").replace(/\s+/g, " ").trim() || "(indefinido)";
   }
 
-  /* ===================== leitura OFX / CSV ===================== */
+  /* ===================== leitura OFX ===================== */
 
   function decodificar(buf) {
     var b = new Uint8Array(buf);
@@ -439,7 +595,8 @@
     else if (s.indexOf(",") > -1) s = s.replace(",", ".");
     return parseFloat(s);
   }
-  // Bancos repartem a descrição entre NAME e MEMO de formas diferentes; junta sem repetir.
+  // Bancos repartem a descrição entre NAME e MEMO de formas diferentes: juntar os
+  // dois sem repetir funciona nos dois estilos; apostar num campo só quebra um deles.
   function descricaoDe(corpo) {
     var n = campo(corpo, "NAME"), m = campo(corpo, "MEMO");
     if (n && m) {
@@ -450,7 +607,6 @@
     }
     return n || m || "(sem descrição)";
   }
-
   function lerOfx(txt) {
     var blocos = txt.split(/<STMTTRN>/i).slice(1);
     if (!blocos.length) return null;
@@ -459,32 +615,34 @@
       var c = b.split(/<\/STMTTRN>/i)[0];
       var v = num(campo(c, "TRNAMT")), d = dataOfx(campo(c, "DTPOSTED"));
       if (isNaN(v) || !d) return;
-      var desc = descricaoDe(c);
       var fit = campo(c, "FITID");
-      out.push({ id: fit || ("s-" + d + "-" + v.toFixed(2) + "-" + i), data: d, valor: v, desc: desc });
+      out.push({ id: fit || ("s-" + d + "-" + v.toFixed(2) + "-" + i), data: d, valor: v, desc: descricaoDe(c) });
     });
     if (!out.length) return null;
-    return {
-      lancamentos: out,
-      saldo: num(campo(txt, "BALAMT")),
-      saldoEm: dataOfx(campo(txt, "DTASOF")),
-      inicio: dataOfx(campo(txt, "DTSTART")),
-      fim: dataOfx(campo(txt, "DTEND"))
-    };
+    return { lancamentos: out, saldo: num(campo(txt, "BALAMT")), saldoEm: dataOfx(campo(txt, "DTASOF")) };
   }
 
   /* ===================== estado ===================== */
 
   var S = {
     db: null, gravavel: null,
-    config: { tetoMei: 81000, reserva: 3000, socios: [] },
-    eventos: [],
-    regras: {},        // descrição normalizada -> categoria (memória exata)
-    padroes: [],       // [trecho, categoria] (regras por conteúdo)
-    lanc: {},          // "YYYY-MM" -> [ {id,data,valor,desc,limpa,cat,auto,evento} ]
+    config: { tetoMei: 81000, mostrarTeto: true, reserva: 3000, socios: [], notionDs: "" },
+    plano: PLANO_PADRAO.map(function (p) { return { grupo: p[0], nome: p[1], tipo: p[2], ativa: true }; }),
+    eventos: [], regras: {}, padroes: [], lanc: {}, resolvidas: {},
     saldo: NaN, saldoEm: null,
-    aba: "painel", limite: 60, eu: ""
+    limite: 60, eu: "", sel: {}
   };
+
+  var tipoCache = {};
+  function TIPO(cat) {
+    if (tipoCache[cat]) return tipoCache[cat];
+    for (var i = 0; i < S.plano.length; i++) {
+      if (S.plano[i].nome === cat) { tipoCache[cat] = S.plano[i].tipo; return tipoCache[cat]; }
+    }
+    return "pendente";
+  }
+  function limparCacheTipo() { tipoCache = {}; }
+  function catsAtivas() { return S.plano.filter(function (c) { return c.ativa !== false; }); }
 
   function todosLanc() {
     var out = [];
@@ -509,6 +667,36 @@
     });
   }
 
+  /* ===================== ajuda "i" ===================== */
+
+  function montarAjudas(raiz) {
+    Array.prototype.forEach.call((raiz || document).querySelectorAll(".info[data-info]"), function (sp) {
+      if (sp.firstChild) return;
+      var b = document.createElement("button");
+      b.type = "button";
+      b.textContent = "i";
+      b.setAttribute("aria-label", "O que é isto");
+      b.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var aberta = sp.querySelector(".info-bolha");
+        fecharAjudas();
+        if (aberta) return;
+        var d = document.createElement("div");
+        d.className = "info-bolha";
+        d.textContent = sp.getAttribute("data-info");
+        sp.appendChild(d);
+      });
+      sp.appendChild(b);
+    });
+  }
+  function fecharAjudas() {
+    Array.prototype.forEach.call(document.querySelectorAll(".info-bolha"), function (d) {
+      if (d.parentNode) d.parentNode.removeChild(d);
+    });
+  }
+  document.addEventListener("click", fecharAjudas);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") fecharAjudas(); });
+
   /* ===================== classificação ===================== */
 
   function classificar(limpa, valor) {
@@ -516,8 +704,8 @@
     for (var i = 0; i < S.padroes.length; i++) {
       if (limpa.indexOf(S.padroes[i][0]) > -1) return { cat: S.padroes[i][1], auto: true };
     }
-    // Uma entrada que não caiu em nenhuma regra é, quase sempre, cliente pagando.
-    // Saída desconhecida fica pendente: errar a despesa distorce o resultado.
+    // Entrada sem regra é, quase sempre, cliente pagando. Saída sem regra fica
+    // pendente: chutar uma despesa distorceria o resultado em silêncio.
     if (typeof valor === "number" && valor > 0) return { cat: "Receita de eventos", auto: true };
     return { cat: PENDENTE, auto: false };
   }
@@ -532,24 +720,86 @@
     });
   }
 
-  /* ===================== armazenamento ===================== */
+  /* ===================== conciliação ===================== */
 
-  function chaveMes(d) { return d.slice(0, 7); }
+  var GENERICOS = {
+    EVENTO:1, EVENTOS:1, ANIVERSARIO:1, FESTA:1, CONFRATERNIZACAO:1, ENCONTRO:1,
+    VIZINHOS:1, ANOS:1, IDOSOS:1, CLUB:1, CLUBE:1, CASAMENTO:1, FORMATURA:1
+  };
+  function tokensDoNome(nome) {
+    return normalizar(nome).split(" ").filter(function (t) { return t.length >= 4 && !GENERICOS[t]; });
+  }
+
+  // O nome aponta os candidatos, o valor confirma. Sobrenome comum (Silva, Lima,
+  // Costa) casa com meio mundo, então nome incompleto sozinho nunca basta.
+  function pontuar(l, e) {
+    if (!e.orcado) return 0;
+    var toks = tokensDoNome(e.nome || "");
+    if (!toks.length) return 0;
+    var dias = 0;
+    if (e.data) {
+      dias = Math.abs((new Date(l.data) - new Date(e.data)) / 86400000);
+      if (dias > 120) return 0;
+    }
+    var hits = 0;
+    toks.forEach(function (t) { if (l.limpa.indexOf(t) > -1) hits++; });
+    if (!hits) return 0;
+
+    var completo = toks.length >= 2 && hits >= 2;
+    var r = l.valor / e.orcado;
+    var valor = Math.abs(r - 1) < 0.06 ? 3
+              : Math.abs(r - 0.5) < 0.08 ? 2
+              : Math.abs(r - (1 / 3)) < 0.06 ? 1 : 0;
+    if (!completo) {
+      if (toks.length >= 2) return 0;
+      if (!valor) return 0;
+    }
+    return hits * 2 + valor + (e.data ? Math.max(0, 2 - dias / 60) : 0);
+  }
+
+  function conciliar() {
+    var todos = todosLanc();
+    todos.forEach(function (l) { if (l.vincAuto) { delete l.evento; delete l.vincAuto; } });
+    todos.forEach(function (l) {
+      if (l.valor <= 0 || l.evento) return;
+      var melhor = null, alto = 0;
+      S.eventos.forEach(function (e) {
+        var p = pontuar(l, e);
+        if (p > alto) { alto = p; melhor = e; }
+      });
+      if (melhor && alto >= 4) { l.evento = melhor.id; l.vincAuto = true; }
+    });
+  }
+
+  var idxReceita = {};
+  function indexarReceita() {
+    idxReceita = {};
+    todosLanc().forEach(function (l) {
+      if (!l.evento) return;
+      idxReceita[l.evento] = (idxReceita[l.evento] || 0) + l.valor;
+    });
+  }
+  function receitaDoEvento(e) { return idxReceita[e.id] || 0; }
+
+  /* ===================== armazenamento ===================== */
 
   function carregar() {
     if (!S.db) return Promise.resolve();
-    var jobs = [
+    return Promise.all([
       S.db.doc("dados/config").get(),
       S.db.doc("dados/eventos").get(),
       S.db.doc("dados/regras").get(),
+      S.db.doc("dados/plano").get(),
+      S.db.doc("dados/divergencias").get(),
       S.db.collection("lancamentos").get()
-    ];
-    return Promise.all(jobs).then(function (r) {
+    ]).then(function (r) {
       if (r[0].exists) {
         var c = r[0].data() || {};
         if (typeof c.tetoMei === "number") S.config.tetoMei = c.tetoMei;
+        if (typeof c.mostrarTeto === "boolean") S.config.mostrarTeto = c.mostrarTeto;
         if (typeof c.reserva === "number") S.config.reserva = c.reserva;
         if (Array.isArray(c.socios)) S.config.socios = c.socios;
+        if (typeof c.notionDs === "string") S.config.notionDs = c.notionDs;
         if (typeof c.saldo === "number") { S.saldo = c.saldo; S.saldoEm = c.saldoEm || null; }
       }
       if (r[1].exists) S.eventos = (r[1].data() || {}).lista || [];
@@ -558,38 +808,47 @@
         S.regras = g.mapa || {};
         S.padroes = g.padroes || [];
       }
-      r[3].docs.forEach(function (d) {
+      if (r[3].exists) {
+        var pl = (r[3].data() || {}).categorias;
+        if (Array.isArray(pl) && pl.length) { S.plano = pl; limparCacheTipo(); }
+      }
+      if (r[4].exists) S.resolvidas = (r[4].data() || {}).chaves || {};
+      r[5].docs.forEach(function (d) {
         var it = (d.data() || {}).itens;
         if (Array.isArray(it)) S.lanc[d.id] = it;
       });
     });
   }
 
-  function salvarMes(mes) {
-    if (!S.db || S.gravavel === false) return Promise.resolve();
-    return S.db.doc("lancamentos/" + mes).set({ itens: S.lanc[mes] })
-      .catch(function (e) { falhaEscrita(e); });
-  }
-  function salvarRegras() {
-    if (!S.db || S.gravavel === false) return Promise.resolve();
-    return S.db.doc("dados/regras").set({ mapa: S.regras, padroes: S.padroes })
-      .catch(function (e) { falhaEscrita(e); });
-  }
-  function salvarConfig() {
-    if (!S.db || S.gravavel === false) return Promise.resolve();
-    return S.db.doc("dados/config").set({
-      tetoMei: S.config.tetoMei, reserva: S.config.reserva, socios: S.config.socios,
-      saldo: S.saldo, saldoEm: S.saldoEm
-    }).catch(function (e) { falhaEscrita(e); });
-  }
-  function falhaEscrita(e) {
-    S.gravavel = false;
-    aviso("warn", "Este acesso é somente leitura, então nada que você mudar aqui será salvo. " +
-      "Quem abriu o aplicativo precisa dar permissão de edição no menu de compartilhar. " +
-      (e && e.code ? "(" + e.code + ")" : ""));
+  function gravar(caminho, corpo, ok) {
+    if (!S.db) { toast("Sem conexão com os dados — nada foi salvo.", "erro"); return Promise.resolve(false); }
+    if (S.gravavel === false) { toast("Este acesso é somente leitura.", "erro"); return Promise.resolve(false); }
+    return S.db.doc(caminho).set(corpo).then(function () {
+      if (ok) toast(ok);
+      return true;
+    }).catch(function (e) {
+      S.gravavel = false;
+      avisar("warn", "Este acesso é somente leitura, então nada que vocês mudarem aqui será salvo. " +
+        "Quem publicou o aplicativo precisa dar permissão de edição no menu de compartilhar." +
+        (e && e.code ? " (" + e.code + ")" : ""));
+      toast("Não foi possível salvar: acesso somente leitura.", "erro");
+      return false;
+    });
   }
 
-  function aviso(tom, msg) {
+  function salvarMes(m, ok)   { return gravar("lancamentos/" + m, { itens: S.lanc[m] }, ok); }
+  function salvarRegras(ok)   { return gravar("dados/regras", { mapa: S.regras, padroes: S.padroes }, ok); }
+  function salvarPlano(ok)    { return gravar("dados/plano", { categorias: S.plano }, ok); }
+  function salvarResolv(ok)   { return gravar("dados/divergencias", { chaves: S.resolvidas }, ok); }
+  function salvarEventos(ok)  { return gravar("dados/eventos", { lista: S.eventos }, ok); }
+  function salvarConfig(ok) {
+    return gravar("dados/config", {
+      tetoMei: S.config.tetoMei, mostrarTeto: S.config.mostrarTeto, reserva: S.config.reserva,
+      socios: S.config.socios, notionDs: S.config.notionDs, saldo: S.saldo, saldoEm: S.saldoEm
+    }, ok);
+  }
+
+  function avisar(tom, msg) {
     var b = $("aviso");
     b.className = "banner " + tom;
     $("aviso-msg").textContent = msg;
@@ -604,27 +863,15 @@
     var ks = Object.keys(anos).sort();
     return ks.length ? ks[ks.length - 1] : String(new Date().getFullYear());
   }
-
-  function somaPorTipo(lista) {
-    var s = {};
-    lista.forEach(function (l) {
-      var t = TIPO[l.cat] || "pendente";
-      s[t] = (s[t] || 0) + l.valor;
-    });
-    return s;
-  }
-
   function filtrarPeriodo(p) {
     var todos = todosLanc();
     if (p === "ano") { var a = anoCorrente(); return todos.filter(function (l) { return l.data.slice(0, 4) === a; }); }
     return todos.filter(function (l) { return l.data.slice(0, 7) === p; });
   }
-
   function calcDre(lista) {
-    var receita = 0, deducao = 0, custo = 0, despesa = 0;
-    var det = {};
+    var receita = 0, deducao = 0, custo = 0, despesa = 0, det = {};
     lista.forEach(function (l) {
-      var t = TIPO[l.cat] || "pendente";
+      var t = TIPO(l.cat);
       if (t === "receita") receita += l.valor;
       else if (t === "deducao") deducao += Math.abs(l.valor);
       else if (t === "custo") custo += Math.abs(l.valor);
@@ -632,77 +879,85 @@
       else return;
       det[l.cat] = (det[l.cat] || 0) + Math.abs(l.valor);
     });
-    var liquida = receita - deducao;
-    var margem = liquida - custo;
+    var liquida = receita - deducao, margem = liquida - custo;
     return { receita: receita, deducao: deducao, liquida: liquida, custo: custo,
              margem: margem, despesa: despesa, resultado: margem - despesa, det: det };
   }
+  function taxaConversao() {
+    var c = 0, p = 0;
+    S.eventos.forEach(function (e) {
+      if (e.status === "Concluído") c++; else if (e.status === "Perdido") p++;
+    });
+    return (c + p) > 0 ? c / (c + p) : 0.75;
+  }
 
-  /* ===================== render: painel ===================== */
+  /* ===================== painel ===================== */
 
-  function renderTeto() {
+  function renderHero() {
     var ano = anoCorrente();
     var doAno = todosLanc().filter(function (l) { return l.data.slice(0, 4) === ano; });
-    var fat = 0, ultima = "";
+    var movimentado = 0, ultima = "";
     doAno.forEach(function (l) {
-      if ((TIPO[l.cat] || "") === "receita") fat += l.valor;
+      if (l.valor > 0 && TIPO(l.cat) === "receita") movimentado += l.valor;
       if (l.data > ultima) ultima = l.data;
     });
 
-    var teto = S.config.tetoMei;
-    var pct = teto > 0 ? fat / teto : 0;
+    $("hero-ano").textContent = ano;
+    $("hero-val").textContent = brl(movimentado);
 
-    // pipeline: eventos que ainda vão gerar receita neste ano
+    if (!S.config.mostrarTeto) {
+      $("hero").setAttribute("data-tone", "neutro");
+      $("hero-de").textContent = "em entradas no ano";
+      $("hero-pct").textContent = "";
+      $("hero-bar").hidden = true;
+      var meses = Object.keys(S.lanc).filter(function (m) { return m.slice(0, 4) === ano; }).length || 1;
+      $("hero-nota").textContent = "Média de " + brl(movimentado / meses) + " por mês ao longo de " +
+        meses + (meses > 1 ? " meses" : " mês") + " de operação.";
+      return;
+    }
+
+    var teto = S.config.tetoMei || 0;
+    var pct = teto > 0 ? movimentado / teto : 0;
     var conf = 0, orc = 0;
     S.eventos.forEach(function (e) {
-      if (!e.data || e.data.slice(0, 4) !== ano) return;
-      if (e.data <= ultima) return;
+      if (!e.data || e.data.slice(0, 4) !== ano || e.data <= ultima) return;
       if (e.status === "Evento Confirmado") conf += (e.orcado || 0);
       else if (e.status === "Orçamento Enviado") orc += (e.orcado || 0);
     });
     var conv = taxaConversao();
-    var projetado = fat + conf + orc * conv;
+    var projetado = movimentado + conf + orc * conv;
     var pctProj = teto > 0 ? projetado / teto : 0;
-
     var tom = pctProj >= 1 ? "crit" : (pctProj >= 0.85 || pct >= 0.8 ? "warn" : "ok");
-    $("gauge").setAttribute("data-tone", tom);
-    $("teto-ano").textContent = ano;
-    $("teto-val").textContent = brl(fat);
-    $("teto-de").textContent = "de " + brl(teto) + " já faturados";
-    $("teto-pct").textContent = Math.round(pct * 100) + "%";
+
+    $("hero").setAttribute("data-tone", tom);
+    $("hero-de").textContent = "de " + brl(teto) + " no ano";
+    $("hero-pct").textContent = Math.round(pct * 100) + "%";
+    $("hero-bar").hidden = false;
     $("bar-real").style.width = Math.min(100, pct * 100) + "%";
     $("bar-real").style.background = tom === "crit" ? "var(--crit)" : (tom === "warn" ? "var(--warn)" : "var(--ok)");
     $("bar-proj").style.width = Math.min(100, pctProj * 100) + "%";
-    $("bar-proj").style.background = "var(--ember)";
 
-    var nota;
     if (!S.eventos.length) {
-      nota = "Sem eventos carregados ainda, então a projeção considera só o que já entrou.";
+      $("hero-nota").textContent = "Sem eventos carregados, a projeção considera apenas o que já entrou.";
     } else if (projetado >= teto) {
-      nota = "Somando os eventos já confirmados (" + brl(conf) + ") e os orçamentos em aberto ajustados pela sua conversão de " +
-             Math.round(conv * 100) + "% (" + brl(orc * conv) + "), a projeção chega a " + brl(projetado) +
-             " — acima do teto. E ainda faltam os eventos que você vai fechar até dezembro.";
+      $("hero-nota").textContent = "Somando os eventos confirmados (" + brl(conf) +
+        ") e os orçamentos em aberto pela conversão de " + Math.round(conv * 100) + "% (" + brl(orc * conv) +
+        "), a projeção chega a " + brl(projetado) + " — acima do limite, e ainda faltam os eventos que vocês vão fechar.";
     } else {
-      nota = "Projeção com os eventos já no funil: " + brl(projetado) + ", ou " + Math.round(pctProj * 100) +
-             "% do teto. Sobra " + brl(teto - projetado) + " antes do limite.";
+      $("hero-nota").textContent = "Com os eventos já no funil, a projeção fecha o ano em " + brl(projetado) +
+        ". Sobram " + brl(teto - projetado) + " antes do limite.";
     }
-    $("teto-nota").textContent = nota;
   }
 
-  function taxaConversao() {
-    var c = 0, p = 0;
-    S.eventos.forEach(function (e) {
-      if (e.status === "Concluído") c++;
-      else if (e.status === "Perdido") p++;
-    });
-    return (c + p) > 0 ? c / (c + p) : 0.75;
+  function tile(l, v, s, tone, info) {
+    return '<div class="tile" data-tone="' + (tone || "") + '"><div class="tile-l">' + esc(l) +
+      (info ? '<span class="info" data-info="' + esc(info) + '"></span>' : "") +
+      '</div><div class="tile-v">' + v + '</div><div class="tile-s">' + esc(s) + "</div></div>";
   }
 
   function renderRetirada() {
     var todos = todosLanc();
     var caixa = !isNaN(S.saldo) ? S.saldo : todos.reduce(function (s, l) { return s + l.valor; }, 0);
-
-    // compromissos: custo dos eventos confirmados ainda por acontecer, estimado pela margem histórica
     var hoje = new Date().toISOString().slice(0, 10);
     var receitaFutura = 0;
     S.eventos.forEach(function (e) {
@@ -711,32 +966,32 @@
     var d = calcDre(filtrarPeriodo("ano"));
     var pctCusto = d.receita > 0 ? d.custo / d.receita : 0.5;
     var custoFuturo = receitaFutura * pctCusto;
-
     var disponivel = caixa - custoFuturo - S.config.reserva;
 
-    // pró-labore sustentável: resultado médio mensal dos últimos meses
-    var meses = Object.keys(S.lanc).sort();
-    var ult = meses.slice(-6);
-    var somaRes = 0, n = 0;
-    ult.forEach(function (m) {
-      var dd = calcDre(S.lanc[m]);
-      somaRes += dd.resultado; n++;
-    });
-    var sustentavel = n > 0 ? somaRes / n : 0;
-    var porSocio = S.config.socios.length ? sustentavel / S.config.socios.length : sustentavel / 2;
+    var meses = Object.keys(S.lanc).sort().slice(-6);
+    var soma = 0;
+    meses.forEach(function (m) { soma += calcDre(S.lanc[m]).resultado; });
+    var sustentavel = meses.length ? soma / meses.length : 0;
+    var qtdSocios = S.config.socios.length || 2;
+    var porSocio = sustentavel / qtdSocios;
 
     $("tiles-retirada").innerHTML = [
       tile("Caixa hoje", brl(caixa), S.saldoEm ? "saldo em " + dbr(S.saldoEm) : "soma dos lançamentos", ""),
-      tile("Custo dos eventos já fechados", brl(custoFuturo), receitaFutura > 0 ? brl(receitaFutura) + " a realizar" : "nenhum confirmado", "out"),
-      tile("Reserva de segurança", brl(S.config.reserva), "definida por vocês", ""),
-      tile("Disponível para retirada", brl(disponivel), disponivel >= 0 ? "pode sair do caixa" : "não há folga", disponivel >= 0 ? "in" : "out"),
-      tile("Pró-labore sustentável", brl(porSocio > 0 ? porSocio : 0), "por sócio, ao mês", porSocio > 0 ? "in" : "out")
+      tile("Custo dos eventos fechados", brl(custoFuturo),
+           receitaFutura > 0 ? brl(receitaFutura) + " a realizar" : "nenhum confirmado", "out",
+           "Estimado aplicando o percentual de custo da própria operação de vocês sobre a receita dos eventos já confirmados que ainda vão acontecer."),
+      tile("Reserva de segurança", brl(S.config.reserva), "ajustável em Ajustes", ""),
+      tile("Disponível para retirada", brl(disponivel),
+           disponivel >= 0 ? "pode sair do caixa" : "não há folga", disponivel >= 0 ? "in" : "out"),
+      tile("Pró-labore sustentável", brl(porSocio > 0 ? porSocio : 0), "por sócio, ao mês",
+           porSocio > 0 ? "in" : "out",
+           "Resultado médio dos últimos meses dividido pelo número de sócios: o quanto dá para retirar todo mês sem consumir o caixa.")
     ].join("");
+    montarAjudas($("tiles-retirada"));
 
-    // retiradas por sócio
     var porNome = {};
     todos.forEach(function (l) {
-      var t = TIPO[l.cat] || "";
+      var t = TIPO(l.cat);
       if (t !== "retirada" && t !== "aporte" && t !== "reembolso") return;
       var quem = l.socio || l.limpa;
       if (!porNome[quem]) porNome[quem] = { retirada: 0, reembolso: 0, aporte: 0 };
@@ -744,51 +999,35 @@
       else if (t === "reembolso") porNome[quem].reembolso += Math.abs(l.valor);
       else porNome[quem].aporte += Math.abs(l.valor);
     });
-
     var nomes = Object.keys(porNome);
     if (!nomes.length) {
       $("box-socios").innerHTML = '<div class="empty">Nenhuma retirada classificada ainda. ' +
-        'Marque os lançamentos dos sócios como “Retirada de sócio”, “Reembolso a sócio” ou “Aporte de sócio” na aba Lançamentos.</div>';
+        'Em Lançamentos, marque as linhas dos sócios e use a ação em lote para separar retirada, reembolso e aporte.</div>';
       return;
     }
-    var linhas = nomes.map(function (k) {
-      var v = porNome[k];
-      var liq = v.retirada - v.aporte;
-      return "<tr><td class='txt'>" + esc(k) + "</td>" +
-        "<td class='num'>" + brl(v.retirada) + "</td>" +
-        "<td class='num'>" + brl(v.reembolso) + "</td>" +
-        "<td class='num'>" + brl(v.aporte) + "</td>" +
-        "<td class='num " + (liq > 0 ? "neg" : "pos") + "'>" + brl(liq) + "</td></tr>";
-    }).join("");
-    $("box-socios").innerHTML = "<table><thead><tr><th>Sócio</th><th style='text-align:right'>Retiradas</th>" +
-      "<th style='text-align:right'>Reembolsos</th><th style='text-align:right'>Aportes</th>" +
-      "<th style='text-align:right'>Líquido</th></tr></thead><tbody>" + linhas + "</tbody></table>";
-  }
-
-  function tile(l, v, s, tone) {
-    return '<div class="tile" data-tone="' + tone + '"><div class="tile-l">' + esc(l) + '</div>' +
-           '<div class="tile-v">' + v + '</div><div class="tile-s">' + esc(s) + '</div></div>';
+    $("box-socios").innerHTML = "<table><thead><tr><th>Sócio</th><th class='num'>Retiradas</th>" +
+      "<th class='num'>Reembolsos</th><th class='num'>Aportes</th><th class='num'>Líquido</th></tr></thead><tbody>" +
+      nomes.map(function (k) {
+        var v = porNome[k], liq = v.retirada - v.aporte;
+        return "<tr><td class='txt'>" + esc(k) + "</td><td class='num'>" + brl(v.retirada) +
+          "</td><td class='num'>" + brl(v.reembolso) + "</td><td class='num'>" + brl(v.aporte) +
+          "</td><td class='num " + (liq > 0 ? "neg" : "pos") + "'>" + brl(liq) + "</td></tr>";
+      }).join("") + "</tbody></table>";
   }
 
   function renderDre() {
-    var p = $("sel-periodo").value || "ano";
-    var d = calcDre(filtrarPeriodo(p));
+    var d = calcDre(filtrarPeriodo($("sel-periodo").value || "ano"));
     var base = d.receita || 1;
-    var pc = function (v) { return d.receita ? Math.round(v / base * 100) + "%" : "—"; };
-
+    var pc = function (v) { return d.receita ? Math.round(v / base * 100) + "%" : ""; };
     function row(lbl, val, cls, pct) {
-      return '<div class="dre-row ' + (cls || "") + '"><span class="lbl">' + esc(lbl) + '</span>' +
-             '<span class="pc">' + (pct || "") + '</span>' +
-             '<span class="val">' + val + '</span></div>';
+      return '<div class="dre-row ' + (cls || "") + '"><span class="lbl">' + esc(lbl) +
+        '</span><span class="pc">' + (pct || "") + '</span><span class="val">' + val + "</span></div>";
     }
     function grupo(nome) {
-      return PLANO.filter(function (x) { return x[0] === nome; })
-        .filter(function (x) { return d.det[x[1]]; })
-        .map(function (x) { return row(x[1], "− " + brl(d.det[x[1]]), "sub", pc(d.det[x[1]])); }).join("");
+      return S.plano.filter(function (x) { return x.grupo === nome && d.det[x.nome]; })
+        .map(function (x) { return row(x.nome, "− " + brl(d.det[x.nome]), "sub", pc(d.det[x.nome])); }).join("");
     }
-
-    var h = "";
-    h += row("Receita bruta", brl(d.receita), "total", "100%");
+    var h = row("Receita bruta", brl(d.receita), "total", d.receita ? "100%" : "");
     if (d.deducao) { h += grupo("Deduções"); h += row("Receita líquida", brl(d.liquida), "total", pc(d.liquida)); }
     h += grupo("Custos diretos");
     h += row("Margem de contribuição", brl(d.margem), "key", pc(d.margem));
@@ -798,72 +1037,114 @@
   }
 
   function renderTopSaidas() {
-    var p = $("sel-periodo").value || "ano";
     var g = {};
-    filtrarPeriodo(p).forEach(function (l) {
-      var t = TIPO[l.cat] || "";
+    filtrarPeriodo($("sel-periodo").value || "ano").forEach(function (l) {
+      var t = TIPO(l.cat);
       if (t !== "custo" && t !== "despesa" && t !== "deducao") return;
       g[l.cat] = (g[l.cat] || 0) + Math.abs(l.valor);
     });
     var arr = Object.keys(g).map(function (k) { return { n: k, v: g[k] }; })
       .sort(function (a, b) { return b.v - a.v; }).slice(0, 8);
-    if (!arr.length) { $("top-saidas").innerHTML = '<div class="empty">Nada classificado ainda neste período.</div>'; return; }
+    if (!arr.length) { $("top-saidas").innerHTML = '<div class="empty">Nada classificado neste período.</div>'; return; }
     var max = arr[0].v;
     $("top-saidas").innerHTML = arr.map(function (x) {
-      return '<div class="barrow"><span class="bn">' + esc(x.n) + '</span>' +
-        '<span class="track"><span style="width:' + Math.round(x.v / max * 100) + '%"></span></span>' +
-        '<span class="bt">' + brl(x.v) + '</span></div>';
+      return '<div class="barrow"><span class="bn">' + esc(x.n) + '</span><span class="track"><span style="width:' +
+        Math.round(x.v / max * 100) + '%"></span></span><span class="bt">' + brl(x.v) + "</span></div>";
     }).join("");
   }
 
-  /* ===================== render: lançamentos ===================== */
+  /* ===================== lançamentos ===================== */
 
   function opcoesCategoria(sel) {
-    var grupos = {};
-    PLANO.forEach(function (p) { (grupos[p[0]] = grupos[p[0]] || []).push(p[1]); });
-    return Object.keys(grupos).map(function (g) {
-      return '<optgroup label="' + esc(g) + '">' + grupos[g].map(function (c) {
+    var ativas = catsAtivas();
+    var por = {};
+    ativas.forEach(function (c) { (por[c.grupo] = por[c.grupo] || []).push(c.nome); });
+    var conhecida = ativas.some(function (c) { return c.nome === sel; });
+    var extra = (sel && !conhecida)
+      ? '<option value="' + esc(sel) + '" selected>' + esc(sel) + " (desativada)</option>" : "";
+    return extra + GRUPOS.filter(function (g) { return por[g]; }).map(function (g) {
+      return '<optgroup label="' + esc(g) + '">' + por[g].map(function (c) {
         return '<option value="' + esc(c) + '"' + (c === sel ? " selected" : "") + ">" + esc(c) + "</option>";
       }).join("") + "</optgroup>";
     }).join("");
   }
 
-  function renderLanc() {
+  function listaFiltrada() {
     var fc = $("filtro-cat").value, fm = $("filtro-mes").value;
-    var lista = todosLanc().filter(function (l) {
+    var q = $("busca").value.trim() ? normalizar($("busca").value) : "";
+    return todosLanc().filter(function (l) {
       if (fm && l.data.slice(0, 7) !== fm) return false;
       if (fc === "pendente" && l.cat !== PENDENTE) return false;
       if (fc === "auto" && !l.auto) return false;
+      if (fc === "manual" && !l.manual) return false;
+      if (q && l.limpa.indexOf(q) === -1) return false;
       return true;
     });
+  }
 
+  function renderLanc() {
+    var lista = listaFiltrada();
     $("lanc-contagem").textContent = lista.length + " lançamentos";
     var mostrar = lista.slice(0, S.limite);
     $("btn-mais").hidden = lista.length <= S.limite;
+    $("btn-mais").textContent = "Mostrar mais " + Math.min(120, Math.max(0, lista.length - S.limite));
+
+    $("lote-evento").innerHTML = '<option value="">Vincular a evento…</option>' +
+      S.eventos.map(function (e) { return '<option value="' + esc(e.id) + '">' + esc(e.nome) + "</option>"; }).join("");
+    $("lote-cat").innerHTML = '<option value="">Aplicar categoria…</option>' + opcoesCategoria("");
 
     if (!lista.length) {
-      $("box-lanc").innerHTML = '<div class="empty">Nenhum lançamento aqui. Importe um extrato acima.</div>';
-      return;
+      $("box-lanc").innerHTML = '<div class="empty">Nenhum lançamento com esse filtro.</div>';
+      renderLote(); return;
     }
 
-    var linhas = mostrar.map(function (l) {
-      var marca = l.manual ? '<span class="pill ok">você</span>'
-        : (l.auto ? '<span class="pill auto">auto</span>' : '<span class="pill warn">pendente</span>');
-      return "<tr data-id='" + esc(l.id) + "'>" +
-        "<td class='dt'>" + dbr(l.data) + "</td>" +
-        "<td class='txt'>" + esc(l.desc) + "<div class='sub2'>" + esc(l.limpa) + "</div></td>" +
-        "<td class='num " + (l.valor < 0 ? "neg" : "pos") + "'>" + brl2(l.valor) + "</td>" +
-        "<td><select data-cat='" + esc(l.id) + "'>" + opcoesCategoria(l.cat) + "</select></td>" +
-        "<td>" + marca + "</td></tr>";
-    }).join("");
+    var nomeEvento = {};
+    S.eventos.forEach(function (e) { nomeEvento[e.id] = e.nome; });
 
-    $("box-lanc").innerHTML = "<table><thead><tr><th>Data</th><th>Descrição</th>" +
-      "<th style='text-align:right'>Valor</th><th>Categoria</th><th>Origem</th></tr></thead><tbody>" +
-      linhas + "</tbody></table>";
+    $("box-lanc").innerHTML = "<table><thead><tr>" +
+      "<th class='chk'><input type='checkbox' id='sel-todos' aria-label='Selecionar todos os visíveis'></th>" +
+      "<th>Data</th><th>Descrição</th><th class='num'>Valor</th><th>Categoria</th><th>Origem</th>" +
+      "</tr></thead><tbody>" + mostrar.map(function (l) {
+        var marca = l.manual ? '<span class="pill ok">vocês</span>'
+          : (l.auto ? '<span class="pill auto">auto</span>' : '<span class="pill warn">pendente</span>');
+        return "<tr data-id='" + esc(l.id) + "'" + (S.sel[l.id] ? " class='sel'" : "") + ">" +
+          "<td class='chk'><input type='checkbox' data-sel='" + esc(l.id) + "'" + (S.sel[l.id] ? " checked" : "") +
+            " aria-label='Selecionar lançamento'></td>" +
+          "<td class='dt'>" + dbr(l.data) + "</td>" +
+          "<td class='txt'>" + esc(l.desc) + "<div class='sub2'>" + esc(l.limpa) +
+            (l.evento && nomeEvento[l.evento] ? " · evento: " + esc(nomeEvento[l.evento]) : "") + "</div></td>" +
+          "<td class='num " + (l.valor < 0 ? "neg" : "pos") + "'>" + brl2(l.valor) + "</td>" +
+          "<td><select data-cat='" + esc(l.id) + "' aria-label='Categoria'>" + opcoesCategoria(l.cat) + "</select></td>" +
+          "<td>" + marca + "</td></tr>";
+      }).join("") + "</tbody></table>";
 
     Array.prototype.forEach.call($("box-lanc").querySelectorAll("select[data-cat]"), function (sel) {
       sel.addEventListener("change", function () { mudarCategoria(sel.getAttribute("data-cat"), sel.value); });
     });
+    Array.prototype.forEach.call($("box-lanc").querySelectorAll("input[data-sel]"), function (c) {
+      c.addEventListener("change", function () {
+        var id = c.getAttribute("data-sel");
+        if (c.checked) S.sel[id] = 1; else delete S.sel[id];
+        var tr = c.parentNode && c.parentNode.parentNode;
+        if (tr) tr.className = c.checked ? "sel" : "";
+        renderLote();
+      });
+    });
+    var todosChk = $("sel-todos");
+    if (todosChk) {
+      todosChk.addEventListener("change", function () {
+        mostrar.forEach(function (l) { if (todosChk.checked) S.sel[l.id] = 1; else delete S.sel[l.id]; });
+        renderLanc();
+        toast(todosChk.checked ? mostrar.length + " lançamentos selecionados." : "Seleção limpa.", "info");
+      });
+    }
+    renderLote();
+  }
+
+  function renderLote() {
+    var n = Object.keys(S.sel).length;
+    $("lote").hidden = n === 0;
+    $("lote-qtd").textContent = n + (n === 1 ? " selecionado" : " selecionados");
   }
 
   function acharLanc(id) {
@@ -874,222 +1155,138 @@
     return achado;
   }
 
-  function mudarCategoria(id, cat) {
-    var a = acharLanc(id);
-    if (!a) return;
-    a.l.cat = cat; a.l.manual = true; a.l.auto = false;
+  function aplicarCategoria(ids, cat, aprender) {
+    var mexidos = {}, n = 0, alvos = {};
+    ids.forEach(function (id) {
+      var a = acharLanc(id);
+      if (!a) return;
+      a.l.cat = cat; a.l.manual = true; a.l.auto = false;
+      mexidos[a.mes] = 1; n++;
+      alvos[a.l.limpa] = 1;
+      if (aprender && cat !== PENDENTE) S.regras[a.l.limpa] = cat;
+    });
+    if (!n) return Promise.resolve(null);
 
-    // aprende: mesma descrição limpa passa a receber a mesma categoria
-    if (cat !== PENDENTE) {
-      S.regras[a.l.limpa] = cat;
-      var mudados = {};
+    var propagados = 0;
+    if (aprender && cat !== PENDENTE) {
       Object.keys(S.lanc).forEach(function (m) {
         S.lanc[m].forEach(function (l) {
-          if (l.id !== id && !l.manual && l.limpa === a.l.limpa && l.cat !== cat) {
-            l.cat = cat; l.auto = true; mudados[m] = 1;
+          if (!l.manual && alvos[l.limpa] && l.cat !== cat) {
+            l.cat = cat; l.auto = true; mexidos[m] = 1; propagados++;
           }
         });
       });
-      Object.keys(mudados).forEach(salvarMes);
-      salvarRegras();
     }
-    salvarMes(a.mes);
-    pintar();
+    var jobs = Object.keys(mexidos).map(function (m) { return salvarMes(m); });
+    if (aprender) jobs.push(salvarRegras());
+    return Promise.all(jobs).then(function () {
+      pintar();
+      return { n: n, propagados: propagados };
+    });
   }
 
-  /* ===================== render: eventos ===================== */
+  function mudarCategoria(id, cat) {
+    aplicarCategoria([id], cat, true).then(function (r) {
+      if (!r) return;
+      toast(r.propagados
+        ? "Categoria aplicada e aprendida — " + r.propagados + " lançamento(s) parecido(s) também mudaram."
+        : "Categoria aplicada e memorizada para este fornecedor.");
+    });
+  }
+
+  /* ===================== eventos ===================== */
 
   function renderEventos() {
     if (!S.eventos.length) {
-      $("box-eventos").innerHTML = '<div class="empty">Nenhum evento carregado.</div>';
-      $("tiles-funil").innerHTML = "";
-      return;
+      $("box-eventos").innerHTML = '<div class="empty">Nenhum evento carregado. Use “Atualizar do Notion”.</div>';
+      $("tiles-funil").innerHTML = ""; return;
     }
     var st = {};
     S.eventos.forEach(function (e) {
       var k = e.status || "Sem status";
-      if (!st[k]) st[k] = { n: 0, v: 0, p: 0 };
-      st[k].n++; st[k].v += (e.orcado || 0); st[k].p += (e.pessoas || 0);
+      if (!st[k]) st[k] = { n: 0, v: 0 };
+      st[k].n++; st[k].v += (e.orcado || 0);
     });
-
     var ordem = ["Novos Clientes", "Orçamento Enviado", "Evento Confirmado", "Concluído", "Perdido"];
-    $("tiles-funil").innerHTML = ordem.filter(function (k) { return st[k]; }).map(function (k) {
+    var extras = Object.keys(st).filter(function (k) { return ordem.indexOf(k) === -1; });
+    $("tiles-funil").innerHTML = ordem.concat(extras).filter(function (k) { return st[k]; }).map(function (k) {
       var x = st[k];
-      var tone = k === "Concluído" ? "in" : (k === "Perdido" ? "out" : "");
-      return tile(k, String(x.n), brl(x.v) + " · " + (x.n ? brl(x.v / x.n) : "—") + " médio", tone);
+      return tile(k, String(x.n), brl(x.v) + " · " + brl(x.v / x.n) + " médio",
+                  k === "Concluído" ? "in" : (k === "Perdido" ? "out" : ""));
     }).join("");
-
-    var conv = taxaConversao();
-    $("funil-conv").textContent = "conversão " + Math.round(conv * 100) + "%";
+    $("funil-conv").textContent = "conversão " + Math.round(taxaConversao() * 100) + "%";
 
     var sf = $("filtro-status").value;
     var lista = S.eventos.filter(function (e) { return !sf || e.status === sf; })
       .sort(function (a, b) { return (b.data || "") < (a.data || "") ? -1 : 1; });
 
-    var linhas = lista.map(function (e) {
-      var recebido = receitaDoEvento(e);
-      var pp = e.pessoas ? (e.orcado || 0) / e.pessoas : NaN;
-      var dif = (e.orcado || 0) - recebido;
-      var sit = "";
-      if (e.status === "Concluído") {
-        if (recebido <= 0) sit = '<span class="pill crit">sem recebimento</span>';
-        else if (Math.abs(dif) < 1) sit = '<span class="pill ok">conciliado</span>';
-        else if (dif > 0) sit = '<span class="pill warn">falta ' + brl(dif) + "</span>";
-        else sit = '<span class="pill auto">recebeu a mais</span>';
-      }
-      return "<tr><td class='dt'>" + (e.data ? dbr(e.data) : "—") + "</td>" +
-        "<td class='txt'>" + esc(e.nome) + "</td>" +
-        "<td><span class='pill'>" + esc(e.status || "—") + "</span></td>" +
-        "<td class='num'>" + (e.pessoas || "—") + "</td>" +
-        "<td class='num'>" + (e.orcado ? brl(e.orcado) : "—") + "</td>" +
-        "<td class='num'>" + (isNaN(pp) ? "—" : brl(pp)) + "</td>" +
-        "<td class='num'>" + (recebido ? brl(recebido) : "—") + "</td>" +
-        "<td>" + sit + "</td></tr>";
-    }).join("");
-
     $("box-eventos").innerHTML = "<table><thead><tr><th>Data</th><th>Evento</th><th>Status</th>" +
-      "<th style='text-align:right'>Pessoas</th><th style='text-align:right'>Orçado</th>" +
-      "<th style='text-align:right'>Por pessoa</th><th style='text-align:right'>Recebido</th>" +
-      "<th>Situação</th></tr></thead><tbody>" + linhas + "</tbody></table>";
+      "<th class='num'>Pessoas</th><th class='num'>Orçado</th><th class='num'>Por pessoa</th>" +
+      "<th class='num'>Recebido</th><th>Situação</th></tr></thead><tbody>" +
+      lista.map(function (e) {
+        var rec = receitaDoEvento(e), dif = (e.orcado || 0) - rec, sit = "";
+        if (e.status === "Concluído") {
+          if (rec <= 0) sit = '<span class="pill warn">sem vínculo</span>';
+          else if (Math.abs(dif) < 1) sit = '<span class="pill ok">conciliado</span>';
+          else if (dif > 0) sit = '<span class="pill warn">falta ' + brl(dif) + "</span>";
+          else sit = '<span class="pill auto">recebeu a mais</span>';
+        }
+        var pp = e.pessoas ? (e.orcado || 0) / e.pessoas : NaN;
+        return "<tr><td class='dt'>" + (e.data ? dbr(e.data) : "—") + "</td><td class='txt'>" + esc(e.nome) +
+          "</td><td><span class='pill'>" + esc(e.status || "—") + "</span></td><td class='num'>" +
+          (e.pessoas || "—") + "</td><td class='num'>" + (e.orcado ? brl(e.orcado) : "—") +
+          "</td><td class='num'>" + (isNaN(pp) ? "—" : brl(pp)) + "</td><td class='num'>" +
+          (rec ? brl(rec) : "—") + "</td><td>" + sit + "</td></tr>";
+      }).join("") + "</tbody></table>";
   }
 
-  // Índice recebido-por-evento, recalculado uma vez por pintura em vez de
-  // varrer todos os lançamentos para cada evento.
-  var idxReceita = {};
+  /* ===================== divergências ===================== */
 
-  function indexarReceita() {
-    idxReceita = {};
-    todosLanc().forEach(function (l) {
-      if (!l.evento) return;
-      idxReceita[l.evento] = (idxReceita[l.evento] || 0) + l.valor;
-    });
-  }
-
-  function receitaDoEvento(e) { return idxReceita[e.id] || 0; }
-
-  // Palavras que aparecem em nome de evento mas não identificam o cliente.
-  var GENERICOS = {
-    EVENTO:1, EVENTOS:1, ANIVERSARIO:1, FESTA:1, CONFRATERNIZACAO:1, ENCONTRO:1,
-    VIZINHOS:1, ANOS:1, IDOSOS:1, CLUB:1, CLUBE:1, CASAMENTO:1, FORMATURA:1
-  };
-
-  function tokensDoNome(nome) {
-    return normalizar(nome).split(" ").filter(function (t) {
-      return t.length >= 4 && !GENERICOS[t];
-    });
-  }
-
-  // Liga cada recebimento ao evento cujo cliente aparece na descrição do PIX.
-  // O nome aponta os candidatos; o valor é quem confirma — sobrenome comum
-  // (Lima, Costa, Silva) casa com meio mundo, então nome sozinho não basta.
-  // Cada recebimento fica com o evento de maior pontuação, nunca com o primeiro
-  // que casar, senão duas clientes de mesmo primeiro nome disputam o pagamento.
-  function pontuar(l, e) {
-    if (!e.orcado) return 0;
-    var toks = tokensDoNome(e.nome || "");
-    if (!toks.length) return 0;
-
-    var dias = 0;
-    if (e.data) {
-      dias = Math.abs((new Date(l.data) - new Date(e.data)) / 86400000);
-      if (dias > 120) return 0;
-    }
-    var hits = 0;
-    toks.forEach(function (t) { if (l.limpa.indexOf(t) > -1) hits++; });
-    if (!hits) return 0;
-
-    // Nome e sobrenome juntos na mesma linha já identificam a pessoa, e o
-    // pagamento pode ter sido partido de qualquer jeito. Só o primeiro nome
-    // (ou só o sobrenome, que costuma ser Silva, Lima, Costa) não identifica
-    // ninguém: aí o valor precisa bater com o orçado, a metade ou um terço.
-    var completo = toks.length >= 2 && hits >= 2;
-    var r = l.valor / e.orcado;
-    var valor = Math.abs(r - 1) < 0.06 ? 3
-              : Math.abs(r - 0.5) < 0.08 ? 2
-              : Math.abs(r - (1 / 3)) < 0.06 ? 1 : 0;
-
-    if (!completo) {
-      if (toks.length >= 2) return 0;
-      if (!valor) return 0;
-    }
-    return hits * 2 + valor + (e.data ? Math.max(0, 2 - dias / 60) : 0);
-  }
-
-  function conciliar() {
-    var todos = todosLanc();
-    todos.forEach(function (l) {
-      if (l.vincAuto) { delete l.evento; delete l.vincAuto; }
-    });
-
-    todos.forEach(function (l) {
-      if (l.valor <= 0 || l.evento) return;
-      var melhor = null, alto = 0;
-      S.eventos.forEach(function (e) {
-        var p = pontuar(l, e);
-        if (p > alto) { alto = p; melhor = e; }
-      });
-      if (melhor && alto >= 4) { l.evento = melhor.id; l.vincAuto = true; }
-    });
-  }
-
-  /* ===================== render: divergências ===================== */
-
-  function renderDivergencias() {
-    var d = [];
-    var todos = todosLanc();
+  function listarDivergencias() {
+    var d = [], todos = todosLanc();
 
     var pend = todos.filter(function (l) { return l.cat === PENDENTE; });
     if (pend.length) {
-      d.push({ t: "warn", h: pend.length + " lançamentos sem categoria",
+      d.push({ k: "pendentes", t: "warn", h: pend.length + " lançamentos sem categoria",
         b: "Somam " + brl2(pend.reduce(function (s, l) { return s + Math.abs(l.valor); }, 0)) +
-           ". Enquanto não forem classificados, ficam de fora do resultado." });
+           ". Enquanto não forem classificados, ficam de fora do resultado.", ir: "pendente" });
     }
-
     if (!isNaN(S.saldo)) {
       var soma = todos.reduce(function (s, l) { return s + l.valor; }, 0);
       if (Math.abs(soma - S.saldo) > 0.05) {
-        d.push({ t: "crit", h: "O saldo não fecha",
+        d.push({ k: "saldo:" + S.saldo.toFixed(2) + ":" + soma.toFixed(2), t: "crit", h: "O saldo não fecha",
           b: "O banco declara " + brl2(S.saldo) + " e a soma dos lançamentos dá " + brl2(soma) +
-             ". A diferença de " + brl2(Math.abs(soma - S.saldo)) + " indica que falta importar algum período." });
+             ". A diferença de " + brl2(Math.abs(soma - S.saldo)) + " indica período faltando." });
       }
     }
-
-    // eventos concluídos sem recebimento correspondente
     var semRec = S.eventos.filter(function (e) {
       return e.status === "Concluído" && e.orcado > 0 && receitaDoEvento(e) <= 0;
     });
     if (semRec.length) {
-      d.push({ t: "warn", h: semRec.length + " eventos concluídos sem recebimento vinculado",
+      d.push({ k: "semrec:" + semRec.map(function (e) { return e.id; }).sort().join(","), t: "warn",
+        h: semRec.length + " eventos concluídos sem recebimento vinculado",
         b: semRec.slice(0, 6).map(function (e) { return e.nome + " (" + brl(e.orcado) + ")"; }).join(", ") +
-           (semRec.length > 6 ? " e outros" : "") + ". Vincule o recebimento ou confirme se foi pago fora da conta." });
+           (semRec.length > 6 ? " e outros" : "") + ". Vincule em Lançamentos ou confirme se foi pago fora da conta." });
     }
-
-    // receita sem evento
-    var ano = anoCorrente();
-    var recebido = 0;
-    todos.forEach(function (l) { if ((TIPO[l.cat] || "") === "receita" && l.data.slice(0, 4) === ano) recebido += l.valor; });
-    var concluido = 0;
+    var ano = anoCorrente(), recebido = 0, concluido = 0;
+    todos.forEach(function (l) { if (TIPO(l.cat) === "receita" && l.data.slice(0, 4) === ano) recebido += l.valor; });
     S.eventos.forEach(function (e) { if (e.status === "Concluído" && (!e.data || e.data.slice(0, 4) === ano)) concluido += (e.orcado || 0); });
     if (recebido - concluido > 500) {
-      d.push({ t: "warn", h: "Receita maior que a soma dos eventos cadastrados",
+      d.push({ k: "receitasemevento:" + ano, t: "warn", h: "Receita maior que a soma dos eventos cadastrados",
         b: "Entraram " + brl(recebido) + " em " + ano + ", mas os eventos concluídos somam " + brl(concluido) +
-           ". A diferença de " + brl(recebido - concluido) + " pode ser evento não cadastrado no CRM." });
+           ". A diferença de " + brl(recebido - concluido) + " pode ser evento que não foi cadastrado no CRM." });
     }
-
-    // pessoas fora da curva
     var comP = S.eventos.filter(function (e) { return e.pessoas > 0; });
     if (comP.length > 3) {
       var med = comP.map(function (e) { return e.pessoas; }).sort(function (a, b) { return a - b; })[Math.floor(comP.length / 2)];
       comP.forEach(function (e) {
         if (e.pessoas > med * 8) {
-          d.push({ t: "warn", h: "Número de convidados fora da curva: " + e.nome,
+          d.push({ k: "pessoas:" + e.id, t: "warn", h: "Número de convidados fora da curva: " + e.nome,
             b: e.pessoas + " pessoas, quando a mediana dos seus eventos é " + med +
-               ". Parece erro de digitação, e um valor assim distorce o custo por convidado." });
+               ". Parece erro de digitação, e distorce o custo por convidado." });
         }
       });
     }
-
-    // valores muito acima da média da categoria
     var porCat = {};
     todos.forEach(function (l) {
       if (l.valor >= 0 || l.cat === PENDENTE) return;
@@ -1101,14 +1298,11 @@
       var mediana = vs[Math.floor(vs.length / 2)];
       todos.forEach(function (l) {
         if (l.cat === c && l.valor < 0 && Math.abs(l.valor) > mediana * 5) {
-          d.push({ t: "warn", h: "Valor muito acima do normal em " + c,
-            b: dbr(l.data) + " · " + l.desc + " · " + brl2(l.valor) +
-               ". A mediana desta categoria é " + brl(mediana) + "." });
+          d.push({ k: "outlier:" + l.id, t: "warn", h: "Valor muito acima do normal em " + c,
+            b: dbr(l.data) + " · " + l.desc + " · " + brl2(l.valor) + ". A mediana da categoria é " + brl(mediana) + "." });
         }
       });
     });
-
-    // pagamentos possivelmente duplicados
     var vistos = {};
     todos.forEach(function (l) {
       if (l.valor >= 0) return;
@@ -1116,76 +1310,213 @@
       if (vistos[k]) {
         var dias = Math.abs((new Date(l.data) - new Date(vistos[k].data)) / 86400000);
         if (dias <= 7) {
-          d.push({ t: "warn", h: "Possível pagamento em duplicidade",
+          d.push({ k: "dup:" + vistos[k].id + ":" + l.id, t: "warn", h: "Possível pagamento em duplicidade",
             b: l.limpa + " · " + brl2(Math.abs(l.valor)) + " em " + dbr(vistos[k].data) + " e " + dbr(l.data) + "." });
         }
       }
       vistos[k] = l;
     });
+    return d;
+  }
 
-    $("badge-div").textContent = String(d.length);
-    $("badge-div").hidden = d.length === 0;
+  function renderDivergencias() {
+    var todas = listarDivergencias();
+    var abertas = todas.filter(function (x) { return !S.resolvidas[x.k]; });
+    var lista = $("ver-resolvidas").checked ? todas : abertas;
 
-    if (!d.length) {
-      $("lista-div").innerHTML = '<div class="empty">Nada pendente de validação. Tudo fecha.</div>';
+    $("badge-div").textContent = String(abertas.length);
+    $("badge-div").hidden = abertas.length === 0;
+
+    if (!lista.length) {
+      $("lista-div").innerHTML = '<div class="empty">' +
+        (todas.length ? "Todas as divergências foram resolvidas." : "Nada pendente de validação. Tudo fecha.") + "</div>";
       return;
     }
-    $("lista-div").innerHTML = d.slice(0, 40).map(function (x) {
-      return '<div class="card" data-tone="' + x.t + '"><div class="card-i">!</div><div class="card-t">' +
-        '<div class="card-h">' + esc(x.h) + '</div><div class="card-b">' + esc(x.b) + '</div></div></div>';
+    $("lista-div").innerHTML = lista.slice(0, 40).map(function (x) {
+      var res = !!S.resolvidas[x.k];
+      return '<div class="card" data-tone="' + (res ? "ok" : x.t) + '"><div class="card-i">' + (res ? "✓" : "!") +
+        '</div><div class="card-t"><div class="card-h">' + esc(x.h) + (res ? ' <span class="pill ok">resolvida</span>' : "") +
+        '</div><div class="card-b">' + esc(x.b) + '</div></div><div class="card-a">' +
+        (x.ir ? '<button class="ghost mini" data-ir="' + esc(x.ir) + '">Resolver agora</button>' : "") +
+        '<button class="mini" data-res="' + esc(x.k) + '" data-on="' + (res ? "0" : "1") + '">' +
+        (res ? "Reabrir" : "Marcar resolvida") + "</button></div></div>";
     }).join("");
+
+    Array.prototype.forEach.call($("lista-div").querySelectorAll("button[data-res]"), function (b) {
+      b.addEventListener("click", function () {
+        var k = b.getAttribute("data-res");
+        if (b.getAttribute("data-on") === "1") {
+          S.resolvidas[k] = { quando: new Date().toISOString(), quem: S.eu || "" };
+          salvarResolv().then(function (ok) { if (ok) toast("Divergência marcada como resolvida."); renderDivergencias(); });
+        } else {
+          delete S.resolvidas[k];
+          salvarResolv().then(function (ok) { if (ok) toast("Divergência reaberta.", "info"); renderDivergencias(); });
+        }
+      });
+    });
+    Array.prototype.forEach.call($("lista-div").querySelectorAll("button[data-ir]"), function (b) {
+      b.addEventListener("click", function () {
+        irPara("lancamentos");
+        $("filtro-cat").value = b.getAttribute("data-ir");
+        S.limite = 60; renderLanc();
+      });
+    });
   }
 
-  /* ===================== pintar tudo ===================== */
+  /* ===================== ajustes ===================== */
 
-  function pintar() {
-    conciliar();
-    indexarReceita();
-    atualizarFiltroMes();
-    renderTeto();
-    renderRetirada();
-    renderDre();
-    renderTopSaidas();
-    renderLanc();
-    renderEventos();
-    renderDivergencias();
+  function renderAjustes() {
+    $("cfg-socio1").value = S.config.socios[0] || "";
+    $("cfg-socio2").value = S.config.socios[1] || "";
+    $("cfg-reserva").value = S.config.reserva;
+    $("cfg-teto").value = S.config.tetoMei;
+    $("cfg-mostrar-teto").checked = !!S.config.mostrarTeto;
+    $("cfg-ds").value = S.config.notionDs || "";
+
+    $("nova-grupo").innerHTML = GRUPOS.map(function (g) {
+      return '<option value="' + esc(g) + '">' + esc(g) + "</option>";
+    }).join("");
+
+    $("cat-contagem").textContent = catsAtivas().length + " de " + S.plano.length + " ativas";
+    $("lista-cats").innerHTML = S.plano.map(function (c, i) {
+      var fixa = c.nome === PENDENTE;
+      return '<div class="catrow' + (c.ativa === false ? " off" : "") + '">' +
+        '<input type="checkbox" data-cat-i="' + i + '"' + (c.ativa !== false ? " checked" : "") +
+        (fixa ? " disabled" : "") + ' aria-label="Ativar ou desativar categoria">' +
+        '<span class="cn">' + esc(c.nome) + '</span><span class="cg">' + esc(c.grupo) + "</span></div>";
+    }).join("");
+    Array.prototype.forEach.call($("lista-cats").querySelectorAll("input[data-cat-i]"), function (c) {
+      c.addEventListener("change", function () {
+        var i = Number(c.getAttribute("data-cat-i"));
+        S.plano[i].ativa = c.checked;
+        salvarPlano().then(function (ok) {
+          if (ok) toast(c.checked ? "“" + S.plano[i].nome + "” ativada."
+                                  : "“" + S.plano[i].nome + "” desativada — o histórico não muda.");
+          renderAjustes(); pintar();
+        });
+      });
+    });
+
+    var rs = Object.keys(S.regras);
+    $("regras-contagem").textContent = rs.length + " fornecedores memorizados e " + S.padroes.length + " padrões";
+    $("box-regras").innerHTML = (!rs.length && !S.padroes.length)
+      ? '<div class="empty">Nada memorizado ainda.</div>'
+      : "<table><thead><tr><th>Reconhece</th><th>Classifica como</th><th></th></tr></thead><tbody>" +
+        S.padroes.map(function (p, i) {
+          return "<tr><td class='txt'>" + esc(p[0]) + " <span class='pill'>padrão</span></td><td class='txt'>" +
+            esc(p[1]) + "</td><td><button class='ghost mini' data-del-p='" + i + "'>Remover</button></td></tr>";
+        }).join("") +
+        rs.map(function (k) {
+          return "<tr><td class='txt'>" + esc(k) + "</td><td class='txt'>" + esc(S.regras[k]) +
+            "</td><td><button class='ghost mini' data-del-r='" + esc(k) + "'>Remover</button></td></tr>";
+        }).join("") + "</tbody></table>";
+
+    Array.prototype.forEach.call($("box-regras").querySelectorAll("button[data-del-r]"), function (b) {
+      b.addEventListener("click", function () {
+        delete S.regras[b.getAttribute("data-del-r")];
+        salvarRegras().then(function (ok) {
+          if (ok) toast("Regra removida.");
+          reclassificarTudo(); renderAjustes(); pintar();
+        });
+      });
+    });
+    Array.prototype.forEach.call($("box-regras").querySelectorAll("button[data-del-p]"), function (b) {
+      b.addEventListener("click", function () {
+        S.padroes.splice(Number(b.getAttribute("data-del-p")), 1);
+        salvarRegras().then(function (ok) {
+          if (ok) toast("Padrão removido.");
+          reclassificarTudo(); renderAjustes(); pintar();
+        });
+      });
+    });
+    montarAjudas($("aba-ajustes"));
   }
 
-  function atualizarFiltroMes() {
-    var meses = Object.keys(S.lanc).sort().reverse();
-    var atualP = $("sel-periodo").value, atualF = $("filtro-mes").value;
-    $("sel-periodo").innerHTML = '<option value="ano">Ano todo</option>' +
-      meses.map(function (m) { return '<option value="' + m + '">' + rotuloMes(m) + "</option>"; }).join("");
-    $("filtro-mes").innerHTML = '<option value="">Todos os meses</option>' +
-      meses.map(function (m) { return '<option value="' + m + '">' + rotuloMes(m) + "</option>"; }).join("");
-    if (atualP) $("sel-periodo").value = atualP;
-    if (atualF) $("filtro-mes").value = atualF;
+  /* ===================== Notion ===================== */
 
-    var sts = {};
-    S.eventos.forEach(function (e) { if (e.status) sts[e.status] = 1; });
-    var atualS = $("filtro-status").value;
-    $("filtro-status").innerHTML = '<option value="">Todos os status</option>' +
-      Object.keys(sts).map(function (s) { return '<option value="' + esc(s) + '">' + esc(s) + "</option>"; }).join("");
-    if (atualS) $("filtro-status").value = atualS;
+  function sincronizarNotion() {
+    var ds = (S.config.notionDs || "").trim();
+    var caixa = $("sync-res");
+    function mostra(t, h, b) {
+      caixa.innerHTML = '<div class="card" data-tone="' + t + '"><div class="card-i">' + (t === "ok" ? "✓" : "!") +
+        '</div><div class="card-t"><div class="card-h">' + esc(h) + '</div><div class="card-b">' + esc(b) + "</div></div></div>";
+    }
+    if (!ds) { mostra("warn", "Falta o endereço da base", "Preencha o endereço da base do Notion no campo acima."); return; }
+    if (!window.claude || typeof window.claude.use !== "function") {
+      mostra("crit", "Fora do claude.ai", "Abra o aplicativo pelo link do artifact."); return;
+    }
+    mostra("ok", "Consultando o Notion…", "Aguarde um instante.");
+
+    window.claude.use("mcp").then(function (mcp) {
+      if (!mcp) {
+        mostra("warn", "Notion não disponível neste acesso",
+          "Quem tem o Notion conectado na conta precisa fazer a atualização; os eventos ficam guardados aqui e aparecem para os dois.");
+        return;
+      }
+      var sql = 'SELECT url, "Nome do evento", "Status", "Orçamento", "Pessoas", "Local", ' +
+                'substr("date:Data do evento:start",1,10) AS data FROM "' + ds + '"';
+      return mcp.callTool("Notion", "notion-query-data-sources", {
+        data: { mode: "sql", data_source_urls: [ds], query: sql }
+      }).then(function (res) {
+        var p = res && res.payload;
+        if (typeof p === "string") { try { p = JSON.parse(p); } catch (e) { p = null; } }
+        var linhas = (p && p.results) || (p && p.rows) || [];
+        if (!linhas.length) {
+          mostra("warn", "O Notion respondeu sem nenhuma linha", "Confira se o endereço da base está correto.");
+          return;
+        }
+        S.eventos = linhas.map(function (r, i) {
+          return {
+            id: String(r.url || ("n" + i)).slice(-32),
+            nome: r["Nome do evento"] || "(sem nome)",
+            data: r.data || null,
+            status: r["Status"] || "",
+            orcado: typeof r["Orçamento"] === "number" ? r["Orçamento"] : null,
+            pessoas: typeof r["Pessoas"] === "number" ? r["Pessoas"] : null,
+            local: r["Local"] || null
+          };
+        });
+        return salvarEventos().then(function (ok) {
+          if (ok) toast(S.eventos.length + " eventos atualizados do Notion.");
+          mostra("ok", S.eventos.length + " eventos atualizados",
+            "Ficam guardados aqui, então seu sócio enxerga mesmo sem ter o Notion conectado.");
+          pintar();
+        });
+      });
+    }).catch(function (err) {
+      var c = err && err.code;
+      if (c === "server_not_connected") {
+        mostra("warn", "O Notion não está conectado nesta conta",
+          "Conecte o Notion nas configurações de conectores do claude.ai e tente de novo.");
+      } else if (c === "needs_reauth") {
+        mostra("warn", "A conexão com o Notion expirou", "Reconecte o Notion no claude.ai e tente de novo.");
+      } else if (c === "not_in_manifest" || c === "bad_request") {
+        mostra("crit", "O aplicativo não conseguiu chamar o Notion desse jeito",
+          "Me avise que eu ajusto a chamada. Enquanto isso os eventos já guardados continuam valendo.");
+      } else if (c === "server_unavailable" || c === "rate_limited") {
+        mostra("warn", "O Notion não respondeu agora", "Tente novamente em alguns instantes.");
+      } else if (c === "blocked_by_policy" || c === "approval_required") {
+        mostra("warn", "A chamada ao Notion não foi autorizada", "Autorize o acesso ao Notion e tente de novo.");
+      } else {
+        mostra("crit", "Não consegui atualizar",
+          (err && err.message) ? err.message : "Erro desconhecido ao falar com o Notion.");
+      }
+      toast("Não foi possível atualizar do Notion.", "erro");
+    });
   }
-
-  var MES = ["jan", "fev", "mar", "abr", "mai", "jun", "jul", "ago", "set", "out", "nov", "dez"];
-  function rotuloMes(m) { var p = m.split("-"); return MES[Number(p[1]) - 1] + "/" + p[0].slice(2); }
 
   /* ===================== importação ===================== */
 
   function importar(arquivo) {
     var fr = new FileReader();
     fr.onload = function (e) {
-      var txt = decodificar(e.target.result);
-      var ext = lerOfx(txt);
+      var ext = lerOfx(decodificar(e.target.result));
       if (!ext) {
-        $("import-res").innerHTML = '<div class="card" data-tone="crit"><div class="card-i">!</div>' +
-          '<div class="card-t"><div class="card-h">Não consegui ler este arquivo</div>' +
-          '<div class="card-b">Exporte o extrato no formato OFX pelo aplicativo do banco e tente de novo.</div></div></div>';
+        $("import-res").innerHTML = cardHtml("crit", "Não consegui ler este arquivo",
+          "Exporte o extrato no formato OFX pelo aplicativo do banco e tente de novo.");
+        toast("Arquivo não reconhecido.", "erro");
         return;
       }
-
       var jaTem = {};
       Object.keys(S.lanc).forEach(function (m) { S.lanc[m].forEach(function (l) { jaTem[l.id] = 1; }); });
 
@@ -1195,68 +1526,99 @@
         jaTem[l.id] = 1;
         var limpa = normalizar(l.desc);
         var c = classificar(limpa, l.valor);
-        var mes = chaveMes(l.data);
+        var mes = l.data.slice(0, 7);
         if (!S.lanc[mes]) S.lanc[mes] = [];
-        S.lanc[mes].push({ id: l.id, data: l.data, valor: l.valor, desc: l.desc,
-                           limpa: limpa, cat: c.cat, auto: c.auto });
+        S.lanc[mes].push({ id: l.id, data: l.data, valor: l.valor, desc: l.desc, limpa: limpa, cat: c.cat, auto: c.auto });
         mexidos[mes] = 1; novos++;
       });
-
       if (!isNaN(ext.saldo)) { S.saldo = ext.saldo; S.saldoEm = ext.saldoEm; }
 
-      Object.keys(mexidos).forEach(function (m) {
+      var jobs = Object.keys(mexidos).map(function (m) {
         S.lanc[m].sort(function (a, b) { return a.data < b.data ? 1 : -1; });
-        salvarMes(m);
+        return salvarMes(m);
       });
-      salvarConfig();
+      jobs.push(salvarConfig());
 
-      var classificados = 0, pendentes = 0;
-      Object.keys(S.lanc).forEach(function (m) {
-        S.lanc[m].forEach(function (l) { if (l.cat === PENDENTE) pendentes++; else classificados++; });
+      Promise.all(jobs).then(function () {
+        var pendentes = 0, classificados = 0;
+        Object.keys(S.lanc).forEach(function (m) {
+          S.lanc[m].forEach(function (l) { if (l.cat === PENDENTE) pendentes++; else classificados++; });
+        });
+        $("import-res").innerHTML =
+          cardHtml("ok", novos + " lançamentos novos importados",
+            repetidos ? repetidos + " já existiam e foram ignorados — nada duplicou." : "Nenhuma repetição encontrada.") +
+          (isNaN(ext.saldo) ? "" : cardHtml("ok", "Saldo do banco: " + brl2(ext.saldo),
+            "Veja em Divergências se a soma dos lançamentos bate com esse valor.")) +
+          cardHtml(pendentes ? "warn" : "ok", classificados + " já classificados, " + pendentes + " aguardando vocês",
+            pendentes ? "Filtre por “Só os não classificados” e use a seleção múltipla para resolver em lote."
+                      : "Tudo reconhecido pelas regras aprendidas.");
+        toast(novos + " lançamentos importados" + (repetidos ? ", " + repetidos + " repetidos ignorados." : "."));
+        S.limite = 60; S.sel = {};
+        pintar();
       });
-
-      $("import-res").innerHTML =
-        card("ok", novos + " lançamentos novos importados",
-             repetidos ? repetidos + " já existiam e foram ignorados — nada duplicou." : "Nenhuma repetição encontrada.") +
-        (isNaN(ext.saldo) ? "" :
-          card("ok", "Saldo do banco: " + brl2(ext.saldo),
-               "Confira na aba Divergências se a soma dos lançamentos bate com esse valor.")) +
-        card(pendentes ? "warn" : "ok",
-             classificados + " já classificados, " + pendentes + " aguardando você",
-             pendentes ? "Vá em Lançamentos e filtre por “Só os não classificados”. Cada correção sua vira regra." :
-                         "Tudo reconhecido pelas regras aprendidas.");
-
-      S.limite = 60;
-      pintar();
     };
     fr.readAsArrayBuffer(arquivo);
   }
 
-  function card(t, h, b) {
+  function cardHtml(t, h, b) {
     return '<div class="card" data-tone="' + t + '"><div class="card-i">' + (t === "ok" ? "✓" : "!") +
-      '</div><div class="card-t"><div class="card-h">' + esc(h) + '</div>' +
-      '<div class="card-b">' + esc(b) + "</div></div></div>";
+      '</div><div class="card-t"><div class="card-h">' + esc(h) + '</div><div class="card-b">' + esc(b) + "</div></div></div>";
   }
 
-  /* ===================== eventos de tela ===================== */
+  /* ===================== pintar ===================== */
+
+  function pintar() {
+    limparCacheTipo();
+    conciliar(); indexarReceita(); atualizarSelects();
+    renderHero(); renderRetirada(); renderDre(); renderTopSaidas();
+    renderLanc(); renderEventos(); renderDivergencias();
+    montarAjudas();
+  }
+
+  var MES = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+  function rotuloMes(m) { var p = m.split("-"); return MES[Number(p[1]) - 1] + "/" + p[0].slice(2); }
+
+  function atualizarSelects() {
+    var meses = Object.keys(S.lanc).sort().reverse();
+    var opts = meses.map(function (m) { return '<option value="' + m + '">' + rotuloMes(m) + "</option>"; }).join("");
+    var aP = $("sel-periodo").value, aF = $("filtro-mes").value;
+    $("sel-periodo").innerHTML = '<option value="ano">Ano todo</option>' + opts;
+    $("filtro-mes").innerHTML = '<option value="">Todos os meses</option>' + opts;
+    if (aP) $("sel-periodo").value = aP;
+    if (aF) $("filtro-mes").value = aF;
+
+    var sts = {};
+    S.eventos.forEach(function (e) { if (e.status) sts[e.status] = 1; });
+    var aS = $("filtro-status").value;
+    $("filtro-status").innerHTML = '<option value="">Todos os status</option>' +
+      Object.keys(sts).map(function (s) { return '<option value="' + esc(s) + '">' + esc(s) + "</option>"; }).join("");
+    if (aS) $("filtro-status").value = aS;
+
+    var nomes = S.config.socios || [];
+    $("sel-socio").innerHTML = '<option value="">—</option>' +
+      nomes.map(function (n) { return '<option value="' + esc(n) + '">' + esc(n) + "</option>"; }).join("");
+    if (S.eu && nomes.indexOf(S.eu) > -1) $("sel-socio").value = S.eu;
+  }
+
+  function irPara(alvo) {
+    Array.prototype.forEach.call(document.querySelectorAll("nav button"), function (o) {
+      o.setAttribute("aria-selected", String(o.getAttribute("data-aba") === alvo));
+    });
+    ["painel", "lancamentos", "eventos", "divergencias", "ajustes"].forEach(function (a) {
+      $("aba-" + a).hidden = (a !== alvo);
+    });
+    if (alvo === "ajustes") renderAjustes();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  /* ===================== ligações ===================== */
 
   Array.prototype.forEach.call(document.querySelectorAll("nav button"), function (b) {
-    b.addEventListener("click", function () {
-      var alvo = b.getAttribute("data-aba");
-      Array.prototype.forEach.call(document.querySelectorAll("nav button"), function (o) {
-        o.setAttribute("aria-selected", String(o === b));
-      });
-      ["painel", "lancamentos", "eventos", "divergencias"].forEach(function (a) {
-        $("aba-" + a).hidden = (a !== alvo);
-      });
-      S.aba = alvo;
-    });
+    b.addEventListener("click", function () { irPara(b.getAttribute("data-aba")); });
   });
 
   $("btn-arq").addEventListener("click", function () { $("arq").click(); });
-  $("arq").addEventListener("change", function (e) {
-    if (e.target.files && e.target.files[0]) importar(e.target.files[0]);
-  });
+  $("arq").addEventListener("change", function (e) { if (e.target.files && e.target.files[0]) importar(e.target.files[0]); });
   ["dragenter", "dragover"].forEach(function (ev) {
     $("drop").addEventListener(ev, function (e) { e.preventDefault(); $("drop").classList.add("over"); });
   });
@@ -1268,43 +1630,147 @@
   });
 
   $("sel-periodo").addEventListener("change", function () { renderDre(); renderTopSaidas(); });
-  $("filtro-cat").addEventListener("change", function () { S.limite = 60; renderLanc(); });
-  $("filtro-mes").addEventListener("change", function () { S.limite = 60; renderLanc(); });
+  ["filtro-cat", "filtro-mes"].forEach(function (id) {
+    $(id).addEventListener("change", function () { S.limite = 60; renderLanc(); });
+  });
+  var tBusca;
+  $("busca").addEventListener("input", function () {
+    clearTimeout(tBusca);
+    tBusca = setTimeout(function () { S.limite = 60; renderLanc(); }, 220);
+  });
   $("filtro-status").addEventListener("change", renderEventos);
   $("btn-mais").addEventListener("click", function () { S.limite += 120; renderLanc(); });
+  $("ver-resolvidas").addEventListener("change", renderDivergencias);
   $("sel-socio").addEventListener("change", function () {
     S.eu = $("sel-socio").value;
     try { localStorage.setItem("zicco_eu", S.eu); } catch (e) {}
+    if (S.eu) toast("Você está usando como " + S.eu + ".", "info");
+  });
+
+  $("lote-limpar").addEventListener("click", function () {
+    S.sel = {}; renderLanc(); toast("Seleção limpa.", "info");
+  });
+  $("lote-aplicar").addEventListener("click", function () {
+    var ids = Object.keys(S.sel), cat = $("lote-cat").value;
+    if (!ids.length) return;
+    if (!cat) { toast("Escolha a categoria antes de aplicar.", "erro"); return; }
+    aplicarCategoria(ids, cat, true).then(function (r) {
+      if (!r) return;
+      S.sel = {};
+      toast(r.n + " lançamento(s) classificados como “" + cat + "”" +
+        (r.propagados ? " — e mais " + r.propagados + " parecido(s) seguiram junto." : "."));
+      renderLanc();
+    });
+  });
+  $("lote-vincular").addEventListener("click", function () {
+    var ids = Object.keys(S.sel), ev = $("lote-evento").value;
+    if (!ids.length) return;
+    if (!ev) { toast("Escolha o evento antes de vincular.", "erro"); return; }
+    var mexidos = {}, n = 0;
+    ids.forEach(function (id) {
+      var a = acharLanc(id);
+      if (!a) return;
+      a.l.evento = ev; delete a.l.vincAuto; mexidos[a.mes] = 1; n++;
+    });
+    Promise.all(Object.keys(mexidos).map(function (m) { return salvarMes(m); })).then(function () {
+      var achado = S.eventos.filter(function (e) { return e.id === ev; })[0];
+      S.sel = {};
+      toast(n + " recebimento(s) vinculados a “" + (achado ? achado.nome : "evento") + "”.");
+      pintar();
+    });
+  });
+
+  $("btn-salvar-socios").addEventListener("click", function () {
+    S.config.socios = [$("cfg-socio1").value.trim(), $("cfg-socio2").value.trim()].filter(Boolean);
+    S.config.reserva = Number($("cfg-reserva").value) || 0;
+    salvarConfig("Sócios e reserva salvos.").then(function () { pintar(); renderAjustes(); });
+  });
+  $("btn-salvar-teto").addEventListener("click", function () {
+    S.config.tetoMei = Number($("cfg-teto").value) || 0;
+    S.config.mostrarTeto = $("cfg-mostrar-teto").checked;
+    salvarConfig(S.config.mostrarTeto ? "Comparação com o teto ligada." : "Comparação com o teto desligada.")
+      .then(function () { pintar(); });
+  });
+  $("btn-salvar-ds").addEventListener("click", function () {
+    S.config.notionDs = $("cfg-ds").value.trim();
+    salvarConfig("Endereço da base salvo.");
+  });
+  $("btn-sync").addEventListener("click", function () {
+    S.config.notionDs = $("cfg-ds").value.trim();
+    sincronizarNotion();
+  });
+  $("btn-sync-ev").addEventListener("click", function () { irPara("ajustes"); sincronizarNotion(); });
+
+  $("btn-nova-cat").addEventListener("click", function () {
+    var nome = $("nova-cat").value.trim(), grupo = $("nova-grupo").value;
+    if (!nome) { toast("Escreva o nome da categoria.", "erro"); return; }
+    if (S.plano.some(function (c) { return c.nome.toLowerCase() === nome.toLowerCase(); })) {
+      toast("Já existe uma categoria com esse nome.", "erro"); return;
+    }
+    S.plano.push({ grupo: grupo, nome: nome, tipo: TIPO_DO_GRUPO[grupo] || "despesa", ativa: true });
+    salvarPlano().then(function (ok) {
+      if (ok) toast("Categoria “" + nome + "” criada em " + grupo + ".");
+      $("nova-cat").value = "";
+      renderAjustes(); pintar();
+    });
+  });
+
+  $("btn-limpar-lanc").addEventListener("click", function () {
+    var b = $("btn-limpar-lanc");
+    if (b.getAttribute("data-confirma") !== "1") {
+      b.setAttribute("data-confirma", "1");
+      b.textContent = "Confirmar: apagar tudo";
+      toast("Clique de novo para confirmar. Não dá para desfazer.", "info");
+      setTimeout(function () {
+        b.removeAttribute("data-confirma");
+        b.textContent = "Apagar lançamentos";
+      }, 6000);
+      return;
+    }
+    var meses = Object.keys(S.lanc);
+    Promise.all(meses.map(function (m) {
+      return S.db ? S.db.doc("lancamentos/" + m).delete() : Promise.resolve();
+    })).then(function () {
+      S.lanc = {}; S.saldo = NaN; S.saldoEm = null;
+      return salvarConfig();
+    }).then(function () {
+      b.removeAttribute("data-confirma");
+      b.textContent = "Apagar lançamentos";
+      toast(meses.length + " meses de lançamentos apagados.");
+      pintar();
+    }).catch(function () {
+      b.removeAttribute("data-confirma");
+      b.textContent = "Apagar lançamentos";
+      toast("Não foi possível apagar.", "erro");
+    });
   });
 
   /* ===================== início ===================== */
 
+  montarAjudas();
   pintar();
 
   if (window.claude && typeof window.claude.use === "function") {
     window.claude.use("db").then(function (db) {
       if (!db) {
-        aviso("warn", "Não consegui abrir os dados compartilhados nesta sessão. " +
-          "Recarregue a página; se continuar, o aplicativo precisa ser aberto pelo link do artifact.");
+        avisar("warn", "Não consegui abrir os dados compartilhados. Recarregue a página; " +
+          "se continuar, abra o aplicativo pelo link do artifact.");
         return;
       }
       S.db = db;
       return carregar().then(function () {
         reclassificarTudo();
-        var nomes = S.config.socios || [];
-        $("sel-socio").innerHTML = '<option value="">—</option>' +
-          nomes.map(function (n) { return '<option value="' + esc(n) + '">' + esc(n) + "</option>"; }).join("");
         try {
           var salvo = localStorage.getItem("zicco_eu");
-          if (salvo && nomes.indexOf(salvo) > -1) { $("sel-socio").value = salvo; S.eu = salvo; }
+          if (salvo) S.eu = salvo;
         } catch (e) {}
         pintar();
       });
     }).catch(function () {
-      aviso("warn", "Houve um problema ao carregar os dados. Recarregue a página.");
+      avisar("warn", "Houve um problema ao carregar os dados. Recarregue a página.");
     });
   } else {
-    aviso("warn", "Abra pelo link do artifact no claude.ai para que os dados sejam compartilhados com seu sócio.");
+    avisar("warn", "Abra pelo link do artifact no claude.ai para que os dados sejam compartilhados com seu sócio.");
   }
 })();
 </script>
