@@ -1449,8 +1449,9 @@
 
     window.claude.use("mcp").then(function (mcp) {
       if (!mcp) {
-        mostra("warn", "Notion não disponível neste acesso",
-          "Quem tem o Notion conectado na conta precisa fazer a atualização; os eventos ficam guardados aqui e aparecem para os dois.");
+        mostra("warn", "A busca automática está desligada",
+          "Para não atrapalhar o compartilhamento com o seu sócio, o aplicativo não fala direto com o Notion. " +
+          "Peça a atualização na conversa com o Claude: os eventos são regravados aqui e aparecem para os dois na hora.");
         return;
       }
       var sql = 'SELECT url, "Nome do evento", "Status", "Orçamento", "Pessoas", "Local", ' +
